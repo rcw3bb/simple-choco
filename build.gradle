@@ -1,0 +1,51 @@
+plugins {
+    id 'java'
+    id 'groovy'
+    id 'java-gradle-plugin'
+    id 'com.gradle.plugin-publish' version '0.11.0'
+}
+
+pluginBundle {
+    website = 'https://github.com/rcw3bb/simple-choco'
+    vcsUrl = 'https://github.com/rcw3bb/simple-choco'
+    tags = ['ronella', 'simple-choco', 'choco', 'chocolatey', 'packages', 'install'
+    	, 'package manager', 'package', 'automation', 'software management', 'management'
+    	, 'software', 'software automation']
+}
+
+gradlePlugin {
+    plugins {
+        simpleChoco {
+            id = 'xyz.ronella.simple-choco'
+            displayName = 'Simple Choco Plugin'
+            description = 'The plugin that allows you access to choco commands inside gradle as task'
+            implementationClass = 'xyz.ronella.gradle.plugin.simple.choco.SimpleChocoPlugin'
+        }
+    }
+}
+
+sourceCompatibility = 1.8
+
+repositories {
+    maven {
+        url 'https://repo.ronella.xyz/artifactory/java-central'
+        credentials {
+            username "${artifactoryUsername}"
+            password "${artifactoryPassword}"
+        }
+    }
+}
+
+dependencies {
+    implementation gradleApi()
+    implementation localGroovy()
+
+    testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter-api', version: '5.5.2'
+    testRuntimeOnly group: 'org.junit.jupiter', name: 'junit-jupiter-engine', version: '5.5.2'
+
+    testImplementation group: 'org.mockito', name: 'mockito-core', version: '3.1.0'
+}
+
+test {
+    useJUnitPlatform()
+}
