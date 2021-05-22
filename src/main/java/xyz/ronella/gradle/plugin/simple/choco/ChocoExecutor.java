@@ -3,6 +3,7 @@ package xyz.ronella.gradle.plugin.simple.choco;
 import java.io.*;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Consumer;
@@ -11,19 +12,24 @@ import java.util.stream.Collectors;
 
 public class ChocoExecutor {
 
-    public static final String LOCAL_CHOCO_DIR = Paths.get("build", "simple", "choco").toString();
-
-    private OSType osType;
+    private final OSType osType;
     private boolean isAutoInstall;
-    private File chocoHome;
-    private boolean isNoop;
-    private final List<Supplier<File>> executables = new ArrayList<>();
+    private final File chocoHome;
+    private final boolean isNoop;
+    private final List<Supplier<File>> executables;
+    private final String command;
+    private final List<String> args;
+    private final List<String> zArgs;
 
     private ChocoExecutor(ChocoExecutorBuilder builder) {
+        executables = new ArrayList<>();
         osType = builder.osType;
         isAutoInstall = builder.isAutoInstall;
         chocoHome = builder.chocoHome;
         isNoop = builder.isNoop;
+        command = builder.command;
+        args = builder.args;
+        zArgs = builder.zArgs;
         prepareExecutables();
     }
 
@@ -97,6 +103,40 @@ public class ChocoExecutor {
         return Optional.empty();
     }
 
+    public void execute() {
+        executable().ifPresent(___executable -> {
+            List<String> fullCommand = new ArrayList<>();
+            fullCommand.add(___executable.getAbsolutePath());
+            Optional.ofNullable(command).ifPresent(fullCommand::add);
+            fullCommand.addAll(args);
+            fullCommand.addAll(zArgs);
+
+            if (isNoop) {
+                System.out.println(String.join(" ", fullCommand));
+            }
+            else {
+                Process process = null;
+                try {
+                    process = new ProcessBuilder(fullCommand.toArray(new String[]{})).start();
+                    BufferedReader output = new BufferedReader(new InputStreamReader(process.getInputStream()));
+                    BufferedReader error = new BufferedReader(new InputStreamReader(process.getErrorStream()));
+
+                    String errorStr = error.lines().collect(Collectors.joining());
+                    String outputStr = output.lines().collect(Collectors.joining());
+
+                    if (errorStr.length()>0) {
+                        System.err.println(errorStr);
+                    }
+                    else {
+                        System.out.println(outputStr);
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace(System.err);
+                }
+            }
+        });
+    }
+
     public static ChocoExecutorBuilder getBuilder() {
         return new ChocoExecutorBuilder();
     }
@@ -106,8 +146,14 @@ public class ChocoExecutor {
         private boolean isAutoInstall;
         private File chocoHome;
         private boolean isNoop;
+        private String command;
+        private List<String> args;
+        private List<String> zArgs;
 
-        private ChocoExecutorBuilder() {}
+        private ChocoExecutorBuilder() {
+            args = new ArrayList<>();
+            zArgs = new ArrayList<>();
+        }
 
         public ChocoExecutorBuilder addOSType(OSType osType) {
             this.osType = osType;
@@ -124,6 +170,26 @@ public class ChocoExecutor {
             return this;
         }
 
+        public ChocoExecutorBuilder addCommand(String command) {
+            this.command = command;
+            return this;
+        }
+
+        public ChocoExecutorBuilder addArgs(String arg, String ... args) {
+            this.args.add(arg);
+            if (args.length>0) {
+                this.args.addAll(Arrays.asList(args));
+            }
+            return this;
+        }
+
+        public ChocoExecutorBuilder addZargs(String arg, String ... args) {
+            this.zArgs.add(arg);
+            if (args.length>0) {
+                this.zArgs.addAll(Arrays.asList(args));
+            }
+            return this;
+        }
         public ChocoExecutorBuilder addNoop() {
             this.isNoop = true;
             return this;
