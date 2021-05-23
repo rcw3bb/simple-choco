@@ -2,13 +2,10 @@ package xyz.ronella.gradle.plugin.simple.choco;
 
 import xyz.ronella.gradle.plugin.simple.choco.tools.CommandRunner;
 
-import java.io.*;
-
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class ChocoInstaller {
 

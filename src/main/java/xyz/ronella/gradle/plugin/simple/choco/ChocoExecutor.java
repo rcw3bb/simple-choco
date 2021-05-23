@@ -9,10 +9,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
-import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
-import java.util.stream.Collectors;
 
 public class ChocoExecutor {
 
@@ -27,7 +25,7 @@ public class ChocoExecutor {
 
     private ChocoExecutor(ChocoExecutorBuilder builder) {
         executables = new ArrayList<>();
-        osType = builder.osType;
+        osType = builder.osType==null ? OSType.identify() : builder.osType;
         isAutoInstall = builder.isAutoInstall;
         chocoHome = builder.chocoHome;
         isNoop = builder.isNoop;
@@ -104,7 +102,8 @@ public class ChocoExecutor {
         return Optional.empty();
     }
 
-    public void execute() {
+    public String execute() {
+        StringBuilder sbCommand = new StringBuilder();
         executable().ifPresent(___executable -> {
             List<String> fullCommand = new ArrayList<>();
             fullCommand.add(___executable.getAbsolutePath());
@@ -112,7 +111,9 @@ public class ChocoExecutor {
             fullCommand.addAll(args);
             fullCommand.addAll(zArgs);
 
-            System.out.println(String.format("Running: %s", String.join(" ", fullCommand)));
+            sbCommand.append(String.join(" ", fullCommand).trim());
+            System.out.println(String.format("OS type: %s", osType));
+            System.out.println(String.format("Command: %s", sbCommand.toString()));
 
             if (!isNoop) {
                 CommandRunner.runCommand((___output, ___error)-> {
@@ -125,6 +126,7 @@ public class ChocoExecutor {
                 }, fullCommand.toArray(new String[]{}));
             }
         });
+        return sbCommand.toString();
     }
 
     public static ChocoExecutorBuilder getBuilder() {
@@ -150,8 +152,8 @@ public class ChocoExecutor {
             return this;
         }
 
-        public ChocoExecutorBuilder addAutoInstall() {
-            this.isAutoInstall = true;
+        public ChocoExecutorBuilder addAutoInstall(boolean isAutoInstall) {
+            this.isAutoInstall = isAutoInstall;
             return this;
         }
 
@@ -165,23 +167,22 @@ public class ChocoExecutor {
             return this;
         }
 
-        public ChocoExecutorBuilder addArgs(String arg, String ... args) {
-            this.args.add(arg);
+        public ChocoExecutorBuilder addArgs(String ... args) {
             if (args.length>0) {
                 this.args.addAll(Arrays.asList(args));
             }
             return this;
         }
 
-        public ChocoExecutorBuilder addZargs(String arg, String ... args) {
-            this.zArgs.add(arg);
+        public ChocoExecutorBuilder addZArgs(String ... args) {
             if (args.length>0) {
                 this.zArgs.addAll(Arrays.asList(args));
             }
             return this;
         }
-        public ChocoExecutorBuilder addNoop() {
-            this.isNoop = true;
+
+        public ChocoExecutorBuilder addNoop(boolean noop) {
+            this.isNoop = noop;
             return this;
         }
 
