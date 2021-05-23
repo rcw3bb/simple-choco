@@ -20,6 +20,6 @@ class SimpleChocoPluginTest {
     @Test
     public void testProject() {
         project.tasks.chocoTask.executeCommand()
-        assertFalse(project.extensions.simple_choco.verbose)
+        assertTrue(project.extensions.simple_choco.verbose)
     }
 }
