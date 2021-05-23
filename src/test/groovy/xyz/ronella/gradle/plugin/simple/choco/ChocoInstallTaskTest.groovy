@@ -27,4 +27,14 @@ class ChocoInstallTaskTest {
         String endsWith = "choco.exe install \"git\""
         assertTrue(command.endsWith(endsWith))
     }
+
+    @Test
+    public void defaultInstallArguments() {
+        project.extensions.simple_choco.defaultInstallArgs += ['-y']
+        def chocoTask = project.tasks.chocoInstall
+        chocoTask.packageName = "git"
+        String command = chocoTask.executeCommand()
+        String endsWith = "choco.exe install \"git\" -y"
+        assertTrue(command.endsWith(endsWith))
+    }
 }

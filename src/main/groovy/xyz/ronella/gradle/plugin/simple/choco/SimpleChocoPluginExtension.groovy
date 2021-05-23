@@ -10,6 +10,8 @@ class SimpleChocoPluginExtension {
 
     public boolean isNoop;
 
+    public String[] defaultInstallArgs = []
+
     public void writeln(String text) {
         if (verbose) {
             println(text)

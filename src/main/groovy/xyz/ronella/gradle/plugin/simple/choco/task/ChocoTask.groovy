@@ -31,7 +31,7 @@ class ChocoTask extends DefaultTask {
 
     @TaskAction
     public String executeCommand() {
-        SimpleChocoPluginExtension pluginExt = project.extensions.simple_choco;
+        SimpleChocoPluginExtension pluginExt = project.extensions.simple_choco
 
         if (null!=internalCommand) {
             command = internalCommand

@@ -1,6 +1,7 @@
 package xyz.ronella.gradle.plugin.simple.choco.task
 
 import org.gradle.api.tasks.Input
+import xyz.ronella.gradle.plugin.simple.choco.SimpleChocoPluginExtension
 
 class ChocoInstallTask extends ChocoTask {
 
@@ -15,7 +16,11 @@ class ChocoInstallTask extends ChocoTask {
 
     @Override
     public String executeCommand() {
+        SimpleChocoPluginExtension pluginExt = project.extensions.simple_choco
+
         internalArgs += String.format("\"%s\"", packageName)
+        internalArgs += pluginExt.defaultInstallArgs
+
         super.executeCommand()
     }
 }
