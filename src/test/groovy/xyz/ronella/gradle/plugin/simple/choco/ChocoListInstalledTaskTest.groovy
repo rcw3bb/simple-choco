@@ -7,7 +7,7 @@ import org.junit.jupiter.api.Test
 
 import static org.junit.jupiter.api.Assertions.assertTrue
 
-class ChocoInstallTaskTest {
+class ChocoListInstalledTaskTest {
 
     private Project project;
 
@@ -21,10 +21,9 @@ class ChocoInstallTaskTest {
 
     @Test
     public void noParameters() {
-        def chocoTask = project.tasks.chocoInstall
-        chocoTask.packageName = "git"
+        def chocoTask = project.tasks.chocoListInstalled
         String command = chocoTask.executeCommand()
-        String endsWith = "choco.exe install \"git\""
+        String endsWith = "choco.exe list --local-only"
         assertTrue(command.endsWith(endsWith))
     }
 }
