@@ -23,6 +23,7 @@ class ChocoTaskTest {
 
     @Test
     public void noParameters() {
+        //chocolatey must be installed before running the tests.
         def chocoTask = project.tasks.chocoTask
         String command = chocoTask.executeCommand()
         assertTrue(command.endsWith(ChocoInstaller.EXECUTABLE))
