@@ -30,10 +30,12 @@ class ChocoTask extends DefaultTask {
     }
 
     @TaskAction
-    String executeCommand() {
+    public String executeCommand() {
         SimpleChocoPluginExtension pluginExt = project.extensions.simple_choco;
 
-        java.util.Optional.ofNullable(internalCommand).ifPresent(___internalCommand -> command=___internalCommand);
+        if (null!=internalCommand) {
+            command = internalCommand
+        }
 
         ChocoExecutor executor = ChocoExecutor.getBuilder()
             .addAutoInstall(pluginExt.isAutoInstall)
