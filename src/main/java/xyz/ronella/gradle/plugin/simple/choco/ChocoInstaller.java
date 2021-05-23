@@ -1,5 +1,7 @@
 package xyz.ronella.gradle.plugin.simple.choco;
 
+import xyz.ronella.gradle.plugin.simple.choco.tools.CommandRunner;
+
 import java.io.*;
 
 import java.nio.file.Path;
@@ -34,35 +36,19 @@ public class ChocoInstaller {
     }
 
     public static void install() throws ChocoInstallException {
-        String information = "Your gradle must be run on an elevated command terminal to use choco.";
+        System.out.println("Installing Chocolatey");
 
-        try {
-            System.out.println("Installing Chocolatey");
+        ChocoInstaller chocoInstaller = new ChocoInstaller();
+        String[] command = chocoInstaller.getCommand().toArray(new String[] {});
 
-            ChocoInstaller chocoInstaller = new ChocoInstaller();
-            String[] command = chocoInstaller.getCommand().toArray(new String[] {});
-
-            Process process = new ProcessBuilder(command).start();
-
-            BufferedReader output = new BufferedReader(new InputStreamReader(process.getInputStream()));
-            BufferedReader error = new BufferedReader(new InputStreamReader(process.getErrorStream()));
-            String outputMessage = output.lines().collect(Collectors.joining());
-            String errorMessage = error.lines().collect(Collectors.joining());
-
-            if (errorMessage.length() > 0) {
-                System.out.println("Error: " + errorMessage);
-                System.out.println(information);
-                throw new ChocoInstallException();
+        CommandRunner.runCommand((___output, ___error) -> {
+            if (___error.length() > 0) {
+                System.out.println("Error: " + ___error);
+                System.out.println("Your gradle must be run on an elevated command terminal to install chocolatey.");
             }
             else {
-                System.out.println("Output: " + outputMessage);
+                System.out.println("Output: " + ___output);
             }
-        }
-        catch(IOException ioe) {
-            System.out.println("Chocolatey installation failed.");
-            System.out.println(ioe.getMessage());
-            System.out.println(information);
-            throw new ChocoInstallException(ioe);
-        }
+        }, command);
     }
 }

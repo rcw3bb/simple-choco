@@ -1,4 +1,4 @@
-package xyz.ronella.gradle.plugin.simple.choco;
+package xyz.ronella.gradle.plugin.simple.choco.tools;
 
 /**
  * An exception that indicates that the OSType is unknown.

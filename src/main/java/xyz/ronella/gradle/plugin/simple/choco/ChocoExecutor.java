@@ -1,11 +1,15 @@
 package xyz.ronella.gradle.plugin.simple.choco;
 
+import xyz.ronella.gradle.plugin.simple.choco.tools.CommandRunner;
+import xyz.ronella.gradle.plugin.simple.choco.tools.OSType;
+
 import java.io.*;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
@@ -52,26 +56,23 @@ public class ChocoExecutor {
     }
 
     private File getExecutableAuto() {
-        try {
-            Process process = new ProcessBuilder("where", ChocoInstaller.EXECUTABLE).start();
-            BufferedReader output = new BufferedReader(new InputStreamReader(process.getInputStream()));
-            String fqfn = output.lines().collect(Collectors.joining());
+        StringBuilder sbFqfn = new StringBuilder();
+        CommandRunner.runCommand((___output, ___error) -> sbFqfn.append(___output),"where", ChocoInstaller.EXECUTABLE);
 
-            if (fqfn.length() > 0) {
-                fqfn = fqfn.split("\\r\\n")[0]; //Just the first valid entry of where.
-                File fileExec = new File(fqfn);
-                if (fileExec.exists()) {
-                    return fileExec;
-                }
+        String fqfn = sbFqfn.toString();
+
+        if (fqfn.length() > 0) {
+            fqfn = fqfn.split("\\r\\n")[0]; //Just the first valid entry of where.
+            File fileExec = new File(fqfn);
+            if (fileExec.exists()) {
+                return fileExec;
             }
         }
-        catch(IOException ioe) {
-            ioe.printStackTrace(System.err);
-        }
+
         return null;
     };
 
-    public Optional<File> executable() {
+    private Optional<File> executable() {
         if (OSType.Windows.equals(osType)) {
             Optional<Supplier<File>> executable = executables.stream().filter(___execLogic -> ___execLogic.get().exists()).findFirst();
             if (executable.isPresent()) {
@@ -111,28 +112,17 @@ public class ChocoExecutor {
             fullCommand.addAll(args);
             fullCommand.addAll(zArgs);
 
-            if (isNoop) {
-                System.out.println(String.join(" ", fullCommand));
-            }
-            else {
-                Process process = null;
-                try {
-                    process = new ProcessBuilder(fullCommand.toArray(new String[]{})).start();
-                    BufferedReader output = new BufferedReader(new InputStreamReader(process.getInputStream()));
-                    BufferedReader error = new BufferedReader(new InputStreamReader(process.getErrorStream()));
+            System.out.println(String.format("Running: %s", String.join(" ", fullCommand)));
 
-                    String errorStr = error.lines().collect(Collectors.joining());
-                    String outputStr = output.lines().collect(Collectors.joining());
-
-                    if (errorStr.length()>0) {
-                        System.err.println(errorStr);
+            if (!isNoop) {
+                CommandRunner.runCommand((___output, ___error)-> {
+                    if (___error.length()>0) {
+                        System.err.println(___error);
                     }
                     else {
-                        System.out.println(outputStr);
+                        System.out.println(___output);
                     }
-                } catch (IOException e) {
-                    e.printStackTrace(System.err);
-                }
+                }, fullCommand.toArray(new String[]{}));
             }
         });
     }

@@ -1,4 +1,4 @@
-package xyz.ronella.gradle.plugin.simple.choco;
+package xyz.ronella.gradle.plugin.simple.choco.tools;
 
 /**
  * The enumerator that identifies the OSType.
