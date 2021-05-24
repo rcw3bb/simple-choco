@@ -20,7 +20,7 @@ public class ChocoInstaller {
     public List<String> getCommand() {
         final String POWER_SHELL = "PowerShell.Exe";
 
-        String installCommand = "\"Start-Process powershell -Verb runas -argumentlist \"\"\"\"-NoProfile\"\"\"\",\"\"\"\"-InputFormat\"\"\"\",\"\"\"\"None\"\"\"\",\"\"\"\"-ExecutionPolicy\"\"\"\",\"\"\"\"Bypass\"\"\"\",\"\"\"\"-Command\"\"\"\",\"\"\"\"[System.Net.ServicePointManager]::SecurityProtocol = 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))\"\"\"\"\"";
+        String installCommand = "\"Start-Process powershell -Wait -Verb runas -argumentlist \"\"\"\"-NoProfile\"\"\"\",\"\"\"\"-InputFormat\"\"\"\",\"\"\"\"None\"\"\"\",\"\"\"\"-ExecutionPolicy\"\"\"\",\"\"\"\"Bypass\"\"\"\",\"\"\"\"-Command\"\"\"\",\"\"\"\"[System.Net.ServicePointManager]::SecurityProtocol = 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))\"\"\"\"\"";
         List<String> command = new ArrayList<>();
         command.add(POWER_SHELL);
         command.add("-NoProfile");
