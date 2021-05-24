@@ -5,6 +5,7 @@ import org.gradle.api.Project
 import xyz.ronella.gradle.plugin.simple.choco.task.ChocoAddSourceTask
 import xyz.ronella.gradle.plugin.simple.choco.task.ChocoInstallTask
 import xyz.ronella.gradle.plugin.simple.choco.task.ChocoListInstalledTask
+import xyz.ronella.gradle.plugin.simple.choco.task.ChocoRemoveSourceTask
 import xyz.ronella.gradle.plugin.simple.choco.task.ChocoSourceListTask
 import xyz.ronella.gradle.plugin.simple.choco.task.ChocoTask
 import xyz.ronella.gradle.plugin.simple.choco.task.ChocoUninstallTask
@@ -20,6 +21,7 @@ class SimpleChocoPlugin implements Plugin<Project> {
         project.task('chocoVersion', type: ChocoVersionTask)
         project.task('chocoSourceList', type: ChocoSourceListTask)
         project.task('chocoAddSource', type: ChocoAddSourceTask)
+        project.task('chocoRemoveSource', type: ChocoRemoveSourceTask)
         project.task('chocoListInstalled', type: ChocoListInstalledTask)
         project.task('chocoInstall', type: ChocoInstallTask)
         project.task('chocoUninstall', type: ChocoUninstallTask)

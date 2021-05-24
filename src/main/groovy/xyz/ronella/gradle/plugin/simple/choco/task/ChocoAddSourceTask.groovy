@@ -2,25 +2,23 @@ package xyz.ronella.gradle.plugin.simple.choco.task
 
 import org.gradle.api.tasks.Input
 
-class ChocoAddSourceTask extends ChocoTask {
-
-    @Input
-    public String name
+class ChocoAddSourceTask extends ChocoRemoveSourceTask {
 
     @Input
     public String url
 
     public ChocoAddSourceTask() {
         super()
-        description = 'Add source to where chocolatey search for a package'
+        description = 'Add a source to where chocolatey search for a package'
+        isAdminMode = true
         internalCommand = 'source'
         internalArgs += "add"
     }
 
     @Override
     public String executeCommand() {
-        internalArgs += String.format("-n=\"%s\"", name)
-        internalArgs += String.format("-s \"%s\"", url)
+        internalArgs += "-s"
+        internalArgs += url
         super.executeCommand()
     }
 }

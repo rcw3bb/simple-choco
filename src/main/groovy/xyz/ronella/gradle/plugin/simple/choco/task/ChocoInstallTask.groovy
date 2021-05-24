@@ -12,15 +12,14 @@ class ChocoInstallTask extends ChocoTask {
         super()
         description = 'Install a package from chocolatey sources'
         internalCommand = 'install'
+        isAdminMode = true
     }
 
     @Override
     public String executeCommand() {
         SimpleChocoPluginExtension pluginExt = project.extensions.simple_choco
-
-        internalArgs += String.format("\"%s\"", packageName)
+        internalArgs += packageName
         internalArgs += pluginExt.defaultInstallArgs
-
         super.executeCommand()
     }
 }
