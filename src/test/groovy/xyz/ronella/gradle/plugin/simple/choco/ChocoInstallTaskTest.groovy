@@ -24,7 +24,7 @@ class ChocoInstallTaskTest {
         def chocoTask = project.tasks.chocoInstall
         chocoTask.packageName = "git"
         String command = chocoTask.executeCommand()
-        String endsWith = "choco.exe install \"git\""
+        String endsWith = "-Verb runas -argumentlist \"\"\"\"install\"\"\"\",\"\"\"\"git\"\"\"\"\""
         assertTrue(command.endsWith(endsWith))
     }
 
@@ -34,7 +34,7 @@ class ChocoInstallTaskTest {
         def chocoTask = project.tasks.chocoInstall
         chocoTask.packageName = "git"
         String command = chocoTask.executeCommand()
-        String endsWith = "choco.exe install \"git\" -y"
+        String endsWith = "-Verb runas -argumentlist \"\"\"\"install\"\"\"\",\"\"\"\"git\"\"\"\",\"\"\"\"-y\"\"\"\"\""
         assertTrue(command.endsWith(endsWith))
     }
 }

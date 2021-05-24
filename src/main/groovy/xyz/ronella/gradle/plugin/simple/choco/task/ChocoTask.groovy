@@ -11,6 +11,7 @@ class ChocoTask extends DefaultTask {
 
     protected String[] internalArgs = []
     protected String internalCommand
+    protected boolean isAdminMode;
 
     @Optional
     @Input
@@ -41,6 +42,7 @@ class ChocoTask extends DefaultTask {
             .addAutoInstall(pluginExt.isAutoInstall)
             .addNoop(pluginExt.isNoop)
             .addChocoHome(pluginExt.chocoHome)
+            .addAdminMode(isAdminMode)
             .addCommand(command)
             .addArgs(internalArgs)
             .addArgs(args)

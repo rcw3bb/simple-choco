@@ -10,6 +10,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.function.Supplier;
 
 public class ChocoExecutor {
@@ -18,6 +19,7 @@ public class ChocoExecutor {
     private boolean isAutoInstall;
     private final File chocoHome;
     private final boolean isNoop;
+    private final boolean isAdminMode;
     private final List<Supplier<File>> executables;
     private final String command;
     private final List<String> args;
@@ -29,6 +31,7 @@ public class ChocoExecutor {
         isAutoInstall = builder.isAutoInstall;
         chocoHome = builder.chocoHome;
         isNoop = builder.isNoop;
+        isAdminMode = builder.isAdminMode;
         command = builder.command;
         args = builder.args;
         zArgs = builder.zArgs;
@@ -105,11 +108,38 @@ public class ChocoExecutor {
     public String execute() {
         StringBuilder sbCommand = new StringBuilder();
         executable().ifPresent(___executable -> {
+            String executable = ___executable.getAbsolutePath();
+            List<String> allArgs = new ArrayList<>();
             List<String> fullCommand = new ArrayList<>();
-            fullCommand.add(___executable.getAbsolutePath());
-            Optional.ofNullable(command).ifPresent(fullCommand::add);
-            fullCommand.addAll(args);
-            fullCommand.addAll(zArgs);
+
+            Optional.ofNullable(command).ifPresent(allArgs::add);
+            allArgs.addAll(args);
+            allArgs.addAll(zArgs);
+
+            if (isAdminMode) {
+                Function<String, String> quadQuote = (___text -> String.format("\"\"\"\"%s\"\"\"\"", ___text));
+
+                StringBuilder sbArgs = new StringBuilder();
+                allArgs.forEach(___arg -> sbArgs.append(sbArgs.length()>0 ? ",": "").append(quadQuote.apply(___arg)));
+
+                StringBuilder sbActualCommand = new StringBuilder("\"Start-Process ");
+                sbActualCommand.append(quadQuote.apply(executable));
+                sbActualCommand.append(" -Verb runas");
+                sbActualCommand.append(sbArgs.length()==0 ? "": " -argumentlist ").append(sbArgs.toString());
+                sbActualCommand.append("\"");
+
+                fullCommand.add("powershell.exe");
+                fullCommand.add("-NoProfile");
+                fullCommand.add("-InputFormat");
+                fullCommand.add("None");
+                fullCommand.add("-ExecutionPolicy") ;
+                fullCommand.add("Bypass");
+                fullCommand.add("-Command");
+                fullCommand.add(sbActualCommand.toString());
+            } else {
+                fullCommand.add(executable);
+                fullCommand.addAll(allArgs);
+            }
 
             sbCommand.append(String.join(" ", fullCommand).trim());
             System.out.println(String.format("OS type: %s", osType));
@@ -139,6 +169,7 @@ public class ChocoExecutor {
         private File chocoHome;
         private boolean isNoop;
         private String command;
+        private boolean isAdminMode;
         private List<String> args;
         private List<String> zArgs;
 
@@ -183,6 +214,11 @@ public class ChocoExecutor {
 
         public ChocoExecutorBuilder addNoop(boolean noop) {
             this.isNoop = noop;
+            return this;
+        }
+
+        public ChocoExecutorBuilder addAdminMode(boolean isAdminMode) {
+            this.isAdminMode = isAdminMode;
             return this;
         }
 

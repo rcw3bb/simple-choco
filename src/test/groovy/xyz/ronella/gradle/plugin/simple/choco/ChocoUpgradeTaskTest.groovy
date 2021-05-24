@@ -23,7 +23,7 @@ class ChocoUpgradeTaskTest {
     public void noParameters() {
         def chocoTask = project.tasks.chocoUpgrade
         String command = chocoTask.executeCommand()
-        String endsWith = "choco.exe upgrade chocolatey"
+        String endsWith = "-Verb runas -argumentlist \"\"\"\"upgrade\"\"\"\",\"\"\"\"chocolatey\"\"\"\"\""
         assertTrue(command.endsWith(endsWith))
     }
 }

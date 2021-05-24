@@ -8,7 +8,7 @@ import xyz.ronella.gradle.plugin.simple.choco.task.ChocoAddSourceTask
 
 import static org.junit.jupiter.api.Assertions.assertTrue
 
-class ChocoAddSourceTaskTest {
+class ChocoRemoveSourceTaskTest {
 
     private Project project;
 
@@ -22,11 +22,11 @@ class ChocoAddSourceTaskTest {
 
     @Test
     public void noParameters() {
-        def chocoTask = project.tasks.chocoAddSource
+        def chocoTask = project.tasks.chocoRemoveSource
         chocoTask.name = "mysource"
-        chocoTask.url = "http://www.mylocal.source"
         String command = chocoTask.executeCommand()
-        String endsWith = "-Verb runas -argumentlist \"\"\"\"source\"\"\"\",\"\"\"\"remove\"\"\"\",\"\"\"\"add\"\"\"\",\"\"\"\"-s\"\"\"\",\"\"\"\"http://www.mylocal.source\"\"\"\",\"\"\"\"-n=mysource\"\"\"\"\""
+        println command
+        String endsWith = "-Verb runas -argumentlist \"\"\"\"source\"\"\"\",\"\"\"\"remove\"\"\"\",\"\"\"\"-n=mysource\"\"\"\"\""
         assertTrue(command.endsWith(endsWith))
     }
 
