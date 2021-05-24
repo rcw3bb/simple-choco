@@ -19,6 +19,8 @@ public class ChocoInstaller {
 
     public List<String> getCommand() {
         final String POWER_SHELL = "PowerShell.Exe";
+
+        String installCommand = "\"Start-Process powershell -Verb runas -argumentlist \"\"\"\"-NoProfile\"\"\"\",\"\"\"\"-InputFormat\"\"\"\",\"\"\"\"None\"\"\"\",\"\"\"\"-ExecutionPolicy\"\"\"\",\"\"\"\"Bypass\"\"\"\",\"\"\"\"-Command\"\"\"\",\"\"\"\"[System.Net.ServicePointManager]::SecurityProtocol = 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))\"\"\"\"\"";
         List<String> command = new ArrayList<>();
         command.add(POWER_SHELL);
         command.add("-NoProfile");
@@ -27,7 +29,7 @@ public class ChocoInstaller {
         command.add("-ExecutionPolicy");
         command.add("Bypass");
         command.add("-Command");
-        command.add("\"[System.Net.ServicePointManager]::SecurityProtocol = 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))\"");
+        command.add(installCommand);
 
         return command;
     }
@@ -41,7 +43,7 @@ public class ChocoInstaller {
         CommandRunner.runCommand((___output, ___error) -> {
             if (___error.length() > 0) {
                 System.out.println("Error: " + ___error);
-                System.out.println("Your gradle must be run on an elevated command terminal to install chocolatey.");
+                System.out.println("Chocolatey automatic installation failed. Install chocolatey manually.");
             }
             else {
                 System.out.println("Output: " + ___output);
