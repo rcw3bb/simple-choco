@@ -4,8 +4,16 @@ import org.gradle.api.tasks.Input
 
 class ChocoRemoveSourceTask extends ChocoTask {
 
+    public String sourceName
+
     @Input
-    public String name
+    public String getSourceName() {
+        return this.getSourceName()
+    }
+
+    public void setSourceName(String name) {
+        this.sourceName = name
+    }
 
     public ChocoRemoveSourceTask() {
         super()
@@ -17,7 +25,7 @@ class ChocoRemoveSourceTask extends ChocoTask {
 
     @Override
     public String executeCommand() {
-        internalArgs += String.format("-n=%s", name)
+        internalArgs += String.format("-n=%s", sourceName)
         super.executeCommand()
     }
 

@@ -4,8 +4,16 @@ import org.gradle.api.tasks.Input
 
 class ChocoAddSourceTask extends ChocoRemoveSourceTask {
 
-    @Input
     public String url
+
+    @Input
+    public String getUrl() {
+        return url
+    }
+
+    public void setUrl(String url) {
+        this.url = url
+    }
 
     public ChocoAddSourceTask() {
         super()

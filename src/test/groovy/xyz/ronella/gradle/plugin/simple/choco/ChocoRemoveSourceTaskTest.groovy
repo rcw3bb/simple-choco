@@ -16,14 +16,13 @@ class ChocoRemoveSourceTaskTest {
     public void initProject() {
         project = ProjectBuilder.builder().build()
         project.pluginManager.apply 'xyz.ronella.simple-choco'
-        project.extensions.simple_choco.verbose = true
         project.extensions.simple_choco.isNoop = true
     }
 
     @Test
     public void noParameters() {
         def chocoTask = project.tasks.chocoRemoveSource
-        chocoTask.name = "mysource"
+        chocoTask.sourceName = "mysource"
         String command = chocoTask.executeCommand()
         println command
         String endsWith = "-Verb runas -argumentlist \"\"\"\"source\"\"\"\",\"\"\"\"remove\"\"\"\",\"\"\"\"-n=mysource\"\"\"\"\""

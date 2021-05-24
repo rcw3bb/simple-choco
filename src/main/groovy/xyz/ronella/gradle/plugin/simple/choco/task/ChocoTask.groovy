@@ -13,17 +13,39 @@ class ChocoTask extends DefaultTask {
     protected String internalCommand
     protected boolean isAdminMode;
 
-    @Optional
-    @Input
-    public String command = ''
+    protected String command = ''
+    protected String[] args = []
+    protected String[] zArgs = []
 
     @Optional
     @Input
-    public String[] args = []
+    public String getCommand() {
+        return this.command
+    }
+
+    public void setCommand(String command) {
+        this.command = command
+    }
 
     @Optional
     @Input
-    public String[] zArgs = []
+    public String[] getArgs() {
+        return this.args
+    }
+
+    @Optional
+    @Input
+    public String[] getZArgs() {
+        return this.zArgs
+    }
+
+    public void setArgs(String[] args) {
+        this.args = args
+    }
+
+    public void setZArgs(String[] args) {
+        this.zArgs = args
+    }
 
     public ChocoTask() {
         group = 'Simple Chocolatey'

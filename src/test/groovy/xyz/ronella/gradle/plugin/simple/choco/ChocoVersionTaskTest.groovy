@@ -15,7 +15,6 @@ class ChocoVersionTaskTest {
     public void initProject() {
         project = ProjectBuilder.builder().build()
         project.pluginManager.apply 'xyz.ronella.simple-choco'
-        project.extensions.simple_choco.verbose = true
         project.extensions.simple_choco.isNoop = true
     }
 

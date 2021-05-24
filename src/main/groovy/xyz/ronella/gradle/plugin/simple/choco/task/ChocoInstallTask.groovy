@@ -5,8 +5,16 @@ import xyz.ronella.gradle.plugin.simple.choco.SimpleChocoPluginExtension
 
 class ChocoInstallTask extends ChocoTask {
 
-    @Input
     public String packageName
+
+    @Input
+    public String getPackageName() {
+        return packageName
+    }
+
+    public void setPackageName(String packageName) {
+        this.packageName = packageName
+    }
 
     public ChocoInstallTask() {
         super()
