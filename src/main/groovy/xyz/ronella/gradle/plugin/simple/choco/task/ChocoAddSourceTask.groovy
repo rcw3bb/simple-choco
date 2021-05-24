@@ -20,7 +20,7 @@ class ChocoAddSourceTask extends ChocoRemoveSourceTask {
         description = 'Add a source to where chocolatey search for a package'
         isAdminMode = true
         internalCommand = 'source'
-        internalArgs += "add"
+        internalArgs = ["add"]
     }
 
     @Override

@@ -8,7 +8,7 @@ class ChocoRemoveSourceTask extends ChocoTask {
 
     @Input
     public String getSourceName() {
-        return this.getSourceName()
+        return this.sourceName
     }
 
     public void setSourceName(String name) {
@@ -20,7 +20,7 @@ class ChocoRemoveSourceTask extends ChocoTask {
         description = 'Remove a source to where chocolatey search for a package'
         isAdminMode = true
         internalCommand = 'source'
-        internalArgs += "remove"
+        internalArgs = ["remove"]
     }
 
     @Override

@@ -21,11 +21,11 @@ class ChocoAddSourceTaskTest {
 
     @Test
     public void noParameters() {
-        def chocoTask = project.tasks.chocoAddSource
+        ChocoAddSourceTask chocoTask = project.tasks.chocoAddSource
         chocoTask.sourceName = "mysource"
         chocoTask.url = "http://www.mylocal.source"
         String command = chocoTask.executeCommand()
-        String endsWith = "-Verb runas -argumentlist \"\"\"\"source\"\"\"\",\"\"\"\"remove\"\"\"\",\"\"\"\"add\"\"\"\",\"\"\"\"-s\"\"\"\",\"\"\"\"http://www.mylocal.source\"\"\"\",\"\"\"\"-n=mysource\"\"\"\"\""
+        String endsWith = "-Verb runas -argumentlist \"\"\"\"source\"\"\"\",\"\"\"\"add\"\"\"\",\"\"\"\"-s\"\"\"\",\"\"\"\"http://www.mylocal.source\"\"\"\",\"\"\"\"-n=mysource\"\"\"\"\""
         assertTrue(command.endsWith(endsWith))
     }
 

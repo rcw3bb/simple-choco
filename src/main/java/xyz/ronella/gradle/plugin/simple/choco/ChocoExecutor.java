@@ -124,7 +124,7 @@ public class ChocoExecutor {
 
                 StringBuilder sbActualCommand = new StringBuilder("\"Start-Process ");
                 sbActualCommand.append(quadQuote.apply(executable));
-                sbActualCommand.append(" -Verb runas");
+                sbActualCommand.append(" -Wait -Verb runas");
                 sbActualCommand.append(sbArgs.length()==0 ? "": " -argumentlist ").append(sbArgs.toString());
                 sbActualCommand.append("\"");
 
