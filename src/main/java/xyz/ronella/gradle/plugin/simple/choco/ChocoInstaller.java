@@ -7,16 +7,36 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * A utility class that can install the chocolatey console application.
+ *
+ * @author Ron Webb
+ * @since v1.0.0
+ */
 public class ChocoInstaller {
 
     private ChocoInstaller() {}
 
+    /**
+     * The choco executor file nanme.
+     */
     public static final String EXECUTABLE = "choco.exe";
 
+    /**
+     * The directory that holds the EXECUTABLE.
+     */
     public static final String BIN_DIR = "bin";
 
+    /**
+     * The default installation location of chocolatey application.
+     */
     public static final Path DEFAULT_INSTALL_LOCATION = Paths.get(System.getenv("ProgramData"), "chocolatey");
 
+    /**
+     * The command the and parameters that will install the chocolatey application.
+     *
+     * @return A list that contains the installation command.
+     */
     public List<String> getCommand() {
         final String POWER_SHELL = "PowerShell.Exe";
 
@@ -34,6 +54,11 @@ public class ChocoInstaller {
         return command;
     }
 
+    /**
+     * The method that will actually install the chocolatey application.
+     *
+     * @throws ChocoInstallException An instance thrown if the installation failed.
+     */
     public static void install() throws ChocoInstallException {
         System.out.println("Installing Chocolatey");
 

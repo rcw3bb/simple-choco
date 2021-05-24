@@ -13,6 +13,12 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
+/**
+ * The class that assembles the appropriate choco command and execute if possible.
+ *
+ * @author Ron Webb
+ * @since v1.0.0
+ */
 public class ChocoExecutor {
 
     private final OSType osType;
@@ -25,6 +31,11 @@ public class ChocoExecutor {
     private final List<String> args;
     private final List<String> zArgs;
 
+    /**
+     * Creates an instance of ChocoExecutor
+     *
+     * @param builder An instance of ChocoExecutorBuilder
+     */
     private ChocoExecutor(ChocoExecutorBuilder builder) {
         executables = new ArrayList<>();
         osType = builder.osType==null ? OSType.identify() : builder.osType;
@@ -38,7 +49,7 @@ public class ChocoExecutor {
         prepareExecutables();
     }
 
-    private final void prepareExecutables() {
+    private void prepareExecutables() {
         Consumer<Supplier<File>> addExecLogic = ___execLogic -> {
             executables.add(___execLogic);
             isAutoInstall = false;
@@ -105,6 +116,11 @@ public class ChocoExecutor {
         return Optional.empty();
     }
 
+    /**
+     * Actually execute the assembled choco command.
+     *
+     * @return The command that wil be exeecuted.
+     */
     public String execute() {
         StringBuilder sbCommand = new StringBuilder();
         executable().ifPresent(___executable -> {
@@ -159,10 +175,21 @@ public class ChocoExecutor {
         return sbCommand.toString();
     }
 
+    /**
+     * Creates an instance of ChocoExecutorBuilder.
+     *
+     * @return An instance of ChocoExecutorBuilder.
+     */
     public static ChocoExecutorBuilder getBuilder() {
         return new ChocoExecutorBuilder();
     }
 
+    /**
+     * The only class that can create a ChocoExecutor instance.
+     *
+     * @author Ron Webb
+     * @since v1.0.0
+     */
     public static class ChocoExecutorBuilder {
         private OSType osType;
         private boolean isAutoInstall;
@@ -178,26 +205,60 @@ public class ChocoExecutor {
             zArgs = new ArrayList<>();
         }
 
+        /**
+         * Add an OSType in the builder.
+         * @param osType An instance of the OSType enum.
+         *
+         * @return An instance of the builder.
+         */
         public ChocoExecutorBuilder addOSType(OSType osType) {
             this.osType = osType;
             return this;
         }
 
+        /**
+         * Adds an indication if the ChocoExecutor will auto install chocolatey.
+         *
+         * @param isAutoInstall Set to true to indicate auto installation.
+         *
+         * @return An instance of the builder.
+         */
         public ChocoExecutorBuilder addAutoInstall(boolean isAutoInstall) {
             this.isAutoInstall = isAutoInstall;
             return this;
         }
 
+        /**
+         * Adds the location of a non-standard location of chocolatey installation.
+         *
+         * @param chocoHome An instance of File holding the location of chocolatey.
+         *
+         * @return An instance of the builder.
+         */
         public ChocoExecutorBuilder addChocoHome(File chocoHome) {
             this.chocoHome = chocoHome;
             return this;
         }
 
+        /**
+         * Add the choco command the be executed.
+         *
+         * @param command The command to be executed.
+         *
+         * @return An instance of the builder.
+         */
         public ChocoExecutorBuilder addCommand(String command) {
             this.command = command;
             return this;
         }
 
+        /**
+         * Adds multiple arguments in one command.
+         *
+         * @param args An array of arguments.
+         *
+         * @return An instance of the builder.
+         */
         public ChocoExecutorBuilder addArgs(String ... args) {
             if (args.length>0) {
                 this.args.addAll(Arrays.asList(args));
@@ -205,6 +266,13 @@ public class ChocoExecutor {
             return this;
         }
 
+        /**
+         * Adds multiple zArguments in one command.
+         *
+         * @param args An array of arguments.
+         *
+         * @return An instance of the builder.
+         */
         public ChocoExecutorBuilder addZArgs(String ... args) {
             if (args.length>0) {
                 this.zArgs.addAll(Arrays.asList(args));
@@ -212,16 +280,33 @@ public class ChocoExecutor {
             return this;
         }
 
+        /**
+         * Adds an indication that no actual choco command will be executed
+         * @param noop Set to true to stop prevent execution.
+         *
+         * @return An instance of the builder.
+         */
         public ChocoExecutorBuilder addNoop(boolean noop) {
             this.isNoop = noop;
             return this;
         }
 
+        /**
+         * Adds an indication assembled choco command will be executed in admin mode.
+         * @param isAdminMode Set to true to run the command in admin mode.
+         *
+         * @return An instance of the builder.
+         */
         public ChocoExecutorBuilder addAdminMode(boolean isAdminMode) {
             this.isAdminMode = isAdminMode;
             return this;
         }
 
+        /**
+         * The method that actually builds an instance of ChocoExecutor.
+         *
+         * @return An instance of the ChocoExecutor.
+         */
         public ChocoExecutor build() {
             return new ChocoExecutor(this);
         }
