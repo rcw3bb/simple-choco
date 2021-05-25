@@ -2,6 +2,12 @@ package xyz.ronella.gradle.plugin.simple.choco.task
 
 import org.gradle.api.tasks.Input
 
+/**
+ * A convenience task for removing a choco source.
+ *
+ * @author Ron Webb
+ * @since v1.0.0
+ */
 class ChocoRemoveSourceTask extends ChocoTask {
 
     public String sourceName

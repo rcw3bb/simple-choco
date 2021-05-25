@@ -3,6 +3,12 @@ package xyz.ronella.gradle.plugin.simple.choco.task
 import org.gradle.api.tasks.Input
 import xyz.ronella.gradle.plugin.simple.choco.SimpleChocoPluginExtension
 
+/**
+ * A convenience task for installing a choco package.
+ *
+ * @author Ron Webb
+ * @since v1.0.0
+ */
 class ChocoInstallTask extends ChocoTask {
 
     public String packageName

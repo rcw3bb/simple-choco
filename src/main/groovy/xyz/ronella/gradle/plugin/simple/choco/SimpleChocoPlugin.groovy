@@ -12,6 +12,12 @@ import xyz.ronella.gradle.plugin.simple.choco.task.ChocoUninstallTask
 import xyz.ronella.gradle.plugin.simple.choco.task.ChocoUpgradeTask
 import xyz.ronella.gradle.plugin.simple.choco.task.ChocoVersionTask
 
+/**
+ * The simple-choco plugin implementation.
+ *
+ * @author Ron Webb
+ * @since v1.0.0
+ */
 class SimpleChocoPlugin implements Plugin<Project> {
 
     @Override

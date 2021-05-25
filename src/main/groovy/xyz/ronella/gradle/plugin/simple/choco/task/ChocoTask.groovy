@@ -7,6 +7,12 @@ import org.gradle.api.tasks.TaskAction
 import xyz.ronella.gradle.plugin.simple.choco.ChocoExecutor
 import xyz.ronella.gradle.plugin.simple.choco.SimpleChocoPluginExtension
 
+/**
+ * The simple-choco base task.
+ *
+ * @author Ron Webb
+ * @since v1.0.0
+ */
 class ChocoTask extends DefaultTask {
 
     protected String[] internalArgs = []

@@ -2,9 +2,15 @@ package xyz.ronella.gradle.plugin.simple.choco.task
 
 import org.gradle.api.tasks.Input
 
+/**
+ * A convenience task for adding a choco source.
+ *
+ * @author Ron Webb
+ * @since v1.0.0
+ */
 class ChocoAddSourceTask extends ChocoRemoveSourceTask {
 
-    public String url
+    protected String url
 
     @Input
     public String getUrl() {
