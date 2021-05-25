@@ -12,6 +12,6 @@ class ChocoUpgradeChocoTask extends ChocoTask {
         isAdminMode = true
         description = 'Upgrade current chocolatey.'
         internalCommand = 'upgrade'
-        internalArgs += "chocolatey"
+        internalArgs += ["chocolatey", "-y"]
     }
 }
