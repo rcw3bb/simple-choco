@@ -1,5 +1,7 @@
 package xyz.ronella.gradle.plugin.simple.choco.task
 
+import xyz.ronella.gradle.plugin.simple.choco.SimpleChocoPluginExtension
+
 /**
  * A convenience task for uninstalling a choco package.
  *
@@ -12,5 +14,11 @@ class ChocoUninstallTask extends ChocoInstallTask {
         super()
         description = 'Uninstall a package installed by chocolatey'
         internalCommand = 'uninstall'
+    }
+
+    @Override
+    protected void setInternalZArgs() {
+        SimpleChocoPluginExtension pluginExt = project.extensions.simple_choco
+        internalZArgs = pluginExt.defaultUninstallArgs
     }
 }

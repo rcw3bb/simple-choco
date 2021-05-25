@@ -26,4 +26,14 @@ class ChocoUninstallTaskTest {
         String endsWith = "-Verb runas -argumentlist \"\"\"\"uninstall\"\"\"\",\"\"\"\"git\"\"\"\"\""
         assertTrue(command.endsWith(endsWith))
     }
+
+    @Test
+    public void defaultUninstallArguments() {
+        project.extensions.simple_choco.defaultUninstallArgs += ['-y']
+        def chocoTask = project.tasks.chocoUninstall
+        chocoTask.packageName = "git"
+        String command = chocoTask.executeCommand()
+        String endsWith = "-Verb runas -argumentlist \"\"\"\"uninstall\"\"\"\",\"\"\"\"git\"\"\"\",\"\"\"\"-y\"\"\"\"\""
+        assertTrue(command.endsWith(endsWith))
+    }
 }

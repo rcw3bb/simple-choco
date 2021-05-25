@@ -16,6 +16,7 @@ import xyz.ronella.gradle.plugin.simple.choco.SimpleChocoPluginExtension
 class ChocoTask extends DefaultTask {
 
     protected String[] internalArgs = []
+    protected String[] internalZArgs = []
     protected String internalCommand
     protected boolean isAdminMode;
 
@@ -74,8 +75,9 @@ class ChocoTask extends DefaultTask {
             .addCommand(command)
             .addArgs(internalArgs)
             .addArgs(args)
+            .addArgs(internalZArgs)
             .addZArgs(zArgs)
-            .build();
+            .build()
 
         executor.execute();
     }

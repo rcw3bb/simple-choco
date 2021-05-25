@@ -29,11 +29,15 @@ class ChocoInstallTask extends ChocoTask {
         isAdminMode = true
     }
 
+    protected void setInternalZArgs() {
+        SimpleChocoPluginExtension pluginExt = project.extensions.simple_choco
+        internalZArgs = pluginExt.defaultInstallArgs
+    }
+
     @Override
     public String executeCommand() {
-        SimpleChocoPluginExtension pluginExt = project.extensions.simple_choco
-        internalArgs += packageName
-        internalArgs += pluginExt.defaultInstallArgs
+        setInternalZArgs()
+        internalArgs = [packageName]
         super.executeCommand()
     }
 }

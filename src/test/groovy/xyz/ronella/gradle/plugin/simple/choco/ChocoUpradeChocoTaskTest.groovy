@@ -7,7 +7,7 @@ import org.junit.jupiter.api.Test
 
 import static org.junit.jupiter.api.Assertions.assertTrue
 
-class ChocoUpgradeTaskTest {
+class ChocoUpradeChocoTaskTest {
 
     private Project project;
 
@@ -18,22 +18,11 @@ class ChocoUpgradeTaskTest {
         project.extensions.simple_choco.isNoop = true
     }
 
-    @Test
     public void noParameters() {
-        def chocoTask = project.tasks.chocoUpgrade
-        chocoTask.packageName = "chocolatey"
+        def chocoTask = project.tasks.chocoUpgradeChoco
         String command = chocoTask.executeCommand()
         String endsWith = "-Verb runas -argumentlist \"\"\"\"upgrade\"\"\"\",\"\"\"\"chocolatey\"\"\"\"\""
         assertTrue(command.endsWith(endsWith))
     }
 
-    @Test
-    public void defaultUpgradeArguments() {
-        project.extensions.simple_choco.defaultUpgradeArgs += ['-y']
-        def chocoTask = project.tasks.chocoUpgrade
-        chocoTask.packageName = "git"
-        String command = chocoTask.executeCommand()
-        String endsWith = "-Verb runas -argumentlist \"\"\"\"upgrade\"\"\"\",\"\"\"\"git\"\"\"\",\"\"\"\"-y\"\"\"\"\""
-        assertTrue(command.endsWith(endsWith))
-    }
 }

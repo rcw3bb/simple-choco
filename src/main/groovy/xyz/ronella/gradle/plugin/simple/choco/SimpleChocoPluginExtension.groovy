@@ -16,4 +16,8 @@ class SimpleChocoPluginExtension {
 
     public String[] defaultInstallArgs = []
 
+    public String[] defaultUninstallArgs = []
+
+    public String[] defaultUpgradeArgs = []
+
 }
