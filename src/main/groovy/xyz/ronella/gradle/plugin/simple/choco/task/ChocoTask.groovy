@@ -56,7 +56,7 @@ class ChocoTask extends DefaultTask {
 
     public ChocoTask() {
         group = 'Simple Chocolatey'
-        description = 'Executes any valid choco commands.'
+        description = 'Executes any valid chocolatey commands.'
     }
 
     @TaskAction

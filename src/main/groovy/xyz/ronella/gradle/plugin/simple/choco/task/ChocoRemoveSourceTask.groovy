@@ -23,7 +23,7 @@ class ChocoRemoveSourceTask extends ChocoTask {
 
     public ChocoRemoveSourceTask() {
         super()
-        description = 'Remove a source to where chocolatey search for a package'
+        description = 'Removes a source to where chocolatey search for a package.'
         isAdminMode = true
         internalCommand = 'source'
         internalArgs = ["remove"]

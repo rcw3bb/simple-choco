@@ -21,7 +21,7 @@ class ChocoInstallTaskTest {
     @Test
     public void noParameters() {
         def chocoTask = project.tasks.chocoInstall
-        chocoTask.packageName = "git"
+        chocoTask.packageNames = ["git"]
         String command = chocoTask.executeCommand()
         String endsWith = "-Verb runas -argumentlist \"\"\"\"install\"\"\"\",\"\"\"\"git\"\"\"\"\""
         assertTrue(command.endsWith(endsWith))
@@ -31,9 +31,19 @@ class ChocoInstallTaskTest {
     public void defaultInstallArguments() {
         project.extensions.simple_choco.defaultInstallArgs += ['-y']
         def chocoTask = project.tasks.chocoInstall
-        chocoTask.packageName = "git"
+        chocoTask.packageNames = ["git"]
         String command = chocoTask.executeCommand()
         String endsWith = "-Verb runas -argumentlist \"\"\"\"install\"\"\"\",\"\"\"\"git\"\"\"\",\"\"\"\"-y\"\"\"\"\""
+        assertTrue(command.endsWith(endsWith))
+    }
+
+    @Test
+    public void multiplePackages() {
+        project.extensions.simple_choco.defaultInstallArgs += ['-y']
+        def chocoTask = project.tasks.chocoInstall
+        chocoTask.packageNames = ["git", "notepadplusplus"]
+        String command = chocoTask.executeCommand()
+        String endsWith = "-Verb runas -argumentlist \"\"\"\"install\"\"\"\",\"\"\"\"git\"\"\"\",\"\"\"\"notepadplusplus\"\"\"\",\"\"\"\"-y\"\"\"\"\""
         assertTrue(command.endsWith(endsWith))
     }
 }

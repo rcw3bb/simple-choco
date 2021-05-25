@@ -11,20 +11,20 @@ import xyz.ronella.gradle.plugin.simple.choco.SimpleChocoPluginExtension
  */
 class ChocoInstallTask extends ChocoTask {
 
-    public String packageName
+    protected String[] packageNames
 
     @Input
-    public String getPackageName() {
-        return packageName
+    public String[] getPackageNames() {
+        return packageNames
     }
 
-    public void setPackageName(String packageName) {
-        this.packageName = packageName
+    public void setPackageNames(String[] packageNames) {
+        this.packageNames = packageNames
     }
 
     public ChocoInstallTask() {
         super()
-        description = 'Install a package from chocolatey sources'
+        description = 'Install packages from chocolatey sources.'
         internalCommand = 'install'
         isAdminMode = true
     }
@@ -37,7 +37,7 @@ class ChocoInstallTask extends ChocoTask {
     @Override
     public String executeCommand() {
         setInternalZArgs()
-        internalArgs = [packageName]
+        internalArgs = packageNames
         super.executeCommand()
     }
 }

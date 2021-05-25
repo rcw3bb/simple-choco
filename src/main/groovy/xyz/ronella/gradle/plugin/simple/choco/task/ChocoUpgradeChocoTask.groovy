@@ -10,7 +10,7 @@ class ChocoUpgradeChocoTask extends ChocoTask {
     public ChocoUpgradeChocoTask() {
         super()
         isAdminMode = true
-        description = 'Upgrade current chocolatey'
+        description = 'Upgrade current chocolatey.'
         internalCommand = 'upgrade'
         internalArgs += "chocolatey"
     }
