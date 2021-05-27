@@ -24,7 +24,7 @@ class ChocoInstallTask extends ChocoTask {
 
     public ChocoInstallTask() {
         super()
-        description = 'Install packages from chocolatey sources.'
+        description = 'Installs packages from the chocolatey sources.'
         internalCommand = 'install'
         isAdminMode = true
         hasLogging = true

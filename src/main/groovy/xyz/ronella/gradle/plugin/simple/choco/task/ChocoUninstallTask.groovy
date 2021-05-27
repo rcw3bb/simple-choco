@@ -12,7 +12,7 @@ class ChocoUninstallTask extends ChocoInstallTask {
 
     public ChocoUninstallTask() {
         super()
-        description = 'Uninstall some packages installed by chocolatey.'
+        description = 'Uninstalls some packages installed by chocolatey.'
         internalCommand = 'uninstall'
     }
 

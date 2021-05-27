@@ -12,7 +12,7 @@ class ChocoUpgradeTask extends ChocoInstallTask {
 
     public ChocoUpgradeTask() {
         super()
-        description = 'Upgrade some installed chocolatey packages'
+        description = 'Upgrades some installed chocolatey packages'
         internalCommand = 'upgrade'
     }
 
