@@ -21,7 +21,7 @@ class ChocoUninstallTaskTest {
     @Test
     public void noParameters() {
         def chocoTask = project.tasks.chocoUninstall
-        chocoTask.packageNames = ["git"]
+        chocoTask.packages = ["git"]
         String command = chocoTask.executeCommand()
         String endsWith = "-Verb runas -argumentlist \"\"\"\"uninstall\"\"\"\",\"\"\"\"git\"\"\"\"\""
         assertTrue(command.endsWith(endsWith))
@@ -31,7 +31,7 @@ class ChocoUninstallTaskTest {
     public void defaultUninstallArguments() {
         project.extensions.simple_choco.defaultUninstallArgs += ['-y']
         def chocoTask = project.tasks.chocoUninstall
-        chocoTask.packageNames = ["git"]
+        chocoTask.packages = ["git"]
         String command = chocoTask.executeCommand()
         String endsWith = "-Verb runas -argumentlist \"\"\"\"uninstall\"\"\"\",\"\"\"\"git\"\"\"\",\"\"\"\"-y\"\"\"\"\""
         assertTrue(command.endsWith(endsWith))
@@ -41,7 +41,7 @@ class ChocoUninstallTaskTest {
     public void multiplePackages() {
         project.extensions.simple_choco.defaultUninstallArgs += ['-y']
         def chocoTask = project.tasks.chocoUninstall
-        chocoTask.packageNames = ["git", "notepadplusplus"]
+        chocoTask.packages = ["git", "notepadplusplus"]
         String command = chocoTask.executeCommand()
         String endsWith = "-Verb runas -argumentlist \"\"\"\"uninstall\"\"\"\",\"\"\"\"git\"\"\"\",\"\"\"\"notepadplusplus\"\"\"\",\"\"\"\"-y\"\"\"\"\""
         assertTrue(command.endsWith(endsWith))

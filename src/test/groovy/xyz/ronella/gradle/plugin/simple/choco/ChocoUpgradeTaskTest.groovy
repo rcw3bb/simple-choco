@@ -21,7 +21,7 @@ class ChocoUpgradeTaskTest {
     @Test
     public void noParameters() {
         def chocoTask = project.tasks.chocoUpgrade
-        chocoTask.packageNames = ["chocolatey"]
+        chocoTask.packages = ["chocolatey"]
         String command = chocoTask.executeCommand()
         String endsWith = "-Verb runas -argumentlist \"\"\"\"upgrade\"\"\"\",\"\"\"\"chocolatey\"\"\"\"\""
         assertTrue(command.endsWith(endsWith))
@@ -31,7 +31,7 @@ class ChocoUpgradeTaskTest {
     public void defaultUpgradeArguments() {
         project.extensions.simple_choco.defaultUpgradeArgs += ['-y']
         def chocoTask = project.tasks.chocoUpgrade
-        chocoTask.packageNames = ["git"]
+        chocoTask.packages = ["git"]
         String command = chocoTask.executeCommand()
         String endsWith = "-Verb runas -argumentlist \"\"\"\"upgrade\"\"\"\",\"\"\"\"git\"\"\"\",\"\"\"\"-y\"\"\"\"\""
         assertTrue(command.endsWith(endsWith))
@@ -41,7 +41,7 @@ class ChocoUpgradeTaskTest {
     public void multiplePackages() {
         project.extensions.simple_choco.defaultUpgradeArgs += ['-y']
         def chocoTask = project.tasks.chocoUpgrade
-        chocoTask.packageNames = ["git", "notepadplusplus"]
+        chocoTask.packages = ["git", "notepadplusplus"]
         String command = chocoTask.executeCommand()
         String endsWith = "-Verb runas -argumentlist \"\"\"\"upgrade\"\"\"\",\"\"\"\"git\"\"\"\",\"\"\"\"notepadplusplus\"\"\"\",\"\"\"\"-y\"\"\"\"\""
         assertTrue(command.endsWith(endsWith))
