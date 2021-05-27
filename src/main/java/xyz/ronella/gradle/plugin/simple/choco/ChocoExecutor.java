@@ -118,6 +118,71 @@ public class ChocoExecutor {
         return Optional.empty();
     }
 
+    private List<String> adminModeCommand(String executable, List<String> allArgs) {
+        List<String> fullCommand = new ArrayList<>();
+        Function<String, String> quadQuote = (___text -> String.format("\"\"\"\"%s\"\"\"\"", ___text));
+
+        StringBuilder sbArgs = new StringBuilder();
+        allArgs.forEach(___arg -> sbArgs.append(sbArgs.length()>0 ? ",": "").append(quadQuote.apply(___arg)));
+
+        StringBuilder sbActualCommand = new StringBuilder("\"Start-Process ");
+        sbActualCommand.append(quadQuote.apply(executable));
+        sbActualCommand.append(" -Wait -Verb runas");
+        sbActualCommand.append(sbArgs.length()==0 ? "": " -argumentlist ").append(sbArgs.toString());
+        sbActualCommand.append("\"");
+
+        fullCommand.add("powershell.exe");
+        fullCommand.add("-NoProfile");
+        fullCommand.add("-InputFormat");
+        fullCommand.add("None");
+        fullCommand.add("-ExecutionPolicy") ;
+        fullCommand.add("Bypass");
+        fullCommand.add("-Command");
+        fullCommand.add(sbActualCommand.toString());
+        return fullCommand;
+    }
+
+    private List<String> generateLoggingArg() {
+        List<String> allArgs = new ArrayList<>();
+        File chocoLogDir = Paths.get(System.getenv("LOCALAPPDATA"), "simple-choco").toFile();
+        if (!chocoLogDir.exists()) {
+            chocoLogDir.mkdirs();
+        }
+        File chocoLogFile = Paths.get(chocoLogDir.getAbsolutePath(), "chocolatey.log").toFile();
+
+        allArgs.add("--log-file");
+        allArgs.add(chocoLogFile.getAbsolutePath());
+        return allArgs;
+    }
+
+    private List<String> prepareCommand(File chocoExecutable) {
+        String executable = chocoExecutable.getAbsolutePath();
+        List<String> allArgs = new ArrayList<>();
+        List<String> fullCommand = new ArrayList<>();
+
+        Optional.ofNullable(command).ifPresent(allArgs::add);
+        allArgs.addAll(args);
+        allArgs.addAll(zArgs);
+
+        List<String> forLogging = new ArrayList<>();
+        forLogging.add(executable);
+        forLogging.addAll(allArgs);
+
+        System.out.println(String.join(" ", forLogging));
+
+        if (!isNoop && hasLogging) {
+            allArgs.addAll(generateLoggingArg());
+        }
+
+        if (isAdminMode) {
+            fullCommand.addAll(adminModeCommand(executable, allArgs));
+        } else {
+            fullCommand.add(executable);
+            fullCommand.addAll(allArgs);
+        }
+        return fullCommand;
+    }
+
     /**
      * Actually execute the assembled choco command.
      *
@@ -126,53 +191,8 @@ public class ChocoExecutor {
     public String execute() {
         StringBuilder sbCommand = new StringBuilder();
         executable().ifPresent(___executable -> {
-            String executable = ___executable.getAbsolutePath();
-            List<String> allArgs = new ArrayList<>();
-            List<String> fullCommand = new ArrayList<>();
-
-            Optional.ofNullable(command).ifPresent(allArgs::add);
-            allArgs.addAll(args);
-            allArgs.addAll(zArgs);
-
-            if (!isNoop && hasLogging) {
-                File chocoLogDir = Paths.get(System.getenv("LOCALAPPDATA"), "simple-choco").toFile();
-                if (!chocoLogDir.exists()) {
-                    chocoLogDir.mkdirs();
-                }
-                File chocoLogFile = Paths.get(chocoLogDir.getAbsolutePath(), "chocolatey.log").toFile();
-
-                allArgs.add("--log-file");
-                allArgs.add(chocoLogFile.getAbsolutePath());
-            }
-
-            if (isAdminMode) {
-                Function<String, String> quadQuote = (___text -> String.format("\"\"\"\"%s\"\"\"\"", ___text));
-
-                StringBuilder sbArgs = new StringBuilder();
-                allArgs.forEach(___arg -> sbArgs.append(sbArgs.length()>0 ? ",": "").append(quadQuote.apply(___arg)));
-
-                StringBuilder sbActualCommand = new StringBuilder("\"Start-Process ");
-                sbActualCommand.append(quadQuote.apply(executable));
-                sbActualCommand.append(" -Wait -Verb runas");
-                sbActualCommand.append(sbArgs.length()==0 ? "": " -argumentlist ").append(sbArgs.toString());
-                sbActualCommand.append("\"");
-
-                fullCommand.add("powershell.exe");
-                fullCommand.add("-NoProfile");
-                fullCommand.add("-InputFormat");
-                fullCommand.add("None");
-                fullCommand.add("-ExecutionPolicy") ;
-                fullCommand.add("Bypass");
-                fullCommand.add("-Command");
-                fullCommand.add(sbActualCommand.toString());
-            } else {
-                fullCommand.add(executable);
-                fullCommand.addAll(allArgs);
-            }
-
+            List<String> fullCommand = prepareCommand(___executable);
             sbCommand.append(String.join(" ", fullCommand).trim());
-            System.out.println(String.format("OS type: %s", osType));
-            System.out.println(String.format("Command: %s", sbCommand.toString()));
 
             if (!isNoop) {
                 CommandRunner.runCommand((___output, ___error)-> {

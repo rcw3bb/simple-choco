@@ -24,7 +24,6 @@ class ChocoRemoveSourceTaskTest {
         def chocoTask = project.tasks.chocoRemoveSource
         chocoTask.sourceName = "mysource"
         String command = chocoTask.executeCommand()
-        println command
         String endsWith = "-Verb runas -argumentlist \"\"\"\"source\"\"\"\",\"\"\"\"remove\"\"\"\",\"\"\"\"-n=mysource\"\"\"\"\""
         assertTrue(command.endsWith(endsWith))
     }
