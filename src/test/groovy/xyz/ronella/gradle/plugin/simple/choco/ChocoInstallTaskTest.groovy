@@ -24,7 +24,7 @@ class ChocoInstallTaskTest {
         chocoTask.packageNames = ["git"]
         String command = chocoTask.executeCommand()
         String endsWith = "-Verb runas -argumentlist \"\"\"\"install\"\"\"\",\"\"\"\"git\"\"\"\"\""
-        assertTrue(command.endsWith(endsWith))
+        assertTrue(command.contains(endsWith))
     }
 
     @Test
@@ -34,7 +34,7 @@ class ChocoInstallTaskTest {
         chocoTask.packageNames = ["git"]
         String command = chocoTask.executeCommand()
         String endsWith = "-Verb runas -argumentlist \"\"\"\"install\"\"\"\",\"\"\"\"git\"\"\"\",\"\"\"\"-y\"\"\"\"\""
-        assertTrue(command.endsWith(endsWith))
+        assertTrue(command.contains(endsWith))
     }
 
     @Test
@@ -44,6 +44,6 @@ class ChocoInstallTaskTest {
         chocoTask.packageNames = ["git", "notepadplusplus"]
         String command = chocoTask.executeCommand()
         String endsWith = "-Verb runas -argumentlist \"\"\"\"install\"\"\"\",\"\"\"\"git\"\"\"\",\"\"\"\"notepadplusplus\"\"\"\",\"\"\"\"-y\"\"\"\"\""
-        assertTrue(command.endsWith(endsWith))
+        assertTrue(command.contains(endsWith))
     }
 }

@@ -27,6 +27,7 @@ class ChocoInstallTask extends ChocoTask {
         description = 'Install packages from chocolatey sources.'
         internalCommand = 'install'
         isAdminMode = true
+        hasLogging = true
     }
 
     protected void setInternalZArgs() {

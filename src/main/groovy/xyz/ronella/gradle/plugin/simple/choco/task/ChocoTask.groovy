@@ -18,7 +18,8 @@ class ChocoTask extends DefaultTask {
     protected String[] internalArgs = []
     protected String[] internalZArgs = []
     protected String internalCommand
-    protected boolean isAdminMode;
+    protected boolean isAdminMode
+    protected boolean hasLogging
 
     protected String command = ''
     protected String[] args = []
@@ -77,6 +78,7 @@ class ChocoTask extends DefaultTask {
             .addArgs(args)
             .addArgs(internalZArgs)
             .addZArgs(zArgs)
+            .addLogging(hasLogging)
             .build()
 
         executor.execute();

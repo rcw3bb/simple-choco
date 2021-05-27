@@ -30,6 +30,7 @@ public class ChocoExecutor {
     private final String command;
     private final List<String> args;
     private final List<String> zArgs;
+    private boolean hasLogging;
 
     /**
      * Creates an instance of ChocoExecutor
@@ -46,6 +47,7 @@ public class ChocoExecutor {
         command = builder.command;
         args = builder.args;
         zArgs = builder.zArgs;
+        hasLogging = builder.hasLogging;
         prepareExecutables();
     }
 
@@ -132,6 +134,17 @@ public class ChocoExecutor {
             allArgs.addAll(args);
             allArgs.addAll(zArgs);
 
+            if (hasLogging) {
+                File chocoLogDir = Paths.get(System.getenv("LOCALAPPDATA"), "simple-choco").toFile();
+                if (!chocoLogDir.exists()) {
+                    chocoLogDir.mkdirs();
+                }
+                File chocoLogFile = Paths.get(chocoLogDir.getAbsolutePath(), "chocolatey.log").toFile();
+
+                allArgs.add("--log-file");
+                allArgs.add(chocoLogFile.getAbsolutePath());
+            }
+
             if (isAdminMode) {
                 Function<String, String> quadQuote = (___text -> String.format("\"\"\"\"%s\"\"\"\"", ___text));
 
@@ -197,8 +210,9 @@ public class ChocoExecutor {
         private boolean isNoop;
         private String command;
         private boolean isAdminMode;
-        private List<String> args;
-        private List<String> zArgs;
+        private final List<String> args;
+        private final List<String> zArgs;
+        private boolean hasLogging;
 
         private ChocoExecutorBuilder() {
             args = new ArrayList<>();
@@ -299,6 +313,17 @@ public class ChocoExecutor {
          */
         public ChocoExecutorBuilder addAdminMode(boolean isAdminMode) {
             this.isAdminMode = isAdminMode;
+            return this;
+        }
+
+        /**
+         * Adds an indication that the choco must log its activities to a file.
+         * @param hasLogging Set to true to enable choco logging.
+         *
+         * @return An instance of the builder.
+         */
+        public ChocoExecutorBuilder addLogging(boolean hasLogging) {
+            this.hasLogging = hasLogging;
             return this;
         }
 
