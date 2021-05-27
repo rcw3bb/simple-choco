@@ -134,7 +134,7 @@ public class ChocoExecutor {
             allArgs.addAll(args);
             allArgs.addAll(zArgs);
 
-            if (hasLogging) {
+            if (!isNoop && hasLogging) {
                 File chocoLogDir = Paths.get(System.getenv("LOCALAPPDATA"), "simple-choco").toFile();
                 if (!chocoLogDir.exists()) {
                     chocoLogDir.mkdirs();
