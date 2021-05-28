@@ -10,7 +10,7 @@ import org.gradle.api.tasks.Input
  */
 class ChocoRemoveSourceTask extends ChocoTask {
 
-    public String sourceName
+    protected String sourceName
 
     @Input
     public String getSourceName() {
