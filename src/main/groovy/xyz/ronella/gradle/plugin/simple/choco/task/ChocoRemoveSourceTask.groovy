@@ -8,7 +8,7 @@ import org.gradle.api.tasks.Input
  * @author Ron Webb
  * @since v1.0.0
  */
-class ChocoRemoveSourceTask extends ChocoTask {
+class ChocoRemoveSourceTask extends ChocoAdminTask {
 
     protected String sourceName
 
@@ -24,7 +24,6 @@ class ChocoRemoveSourceTask extends ChocoTask {
     public ChocoRemoveSourceTask() {
         super()
         description = 'Removes a source to where chocolatey search for a package.'
-        isAdminMode = true
         internalCommand = 'source'
         internalArgs = ["remove"]
     }
