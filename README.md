@@ -114,7 +114,7 @@ chocoTask {
 
 > If you are *running gradle in administration mode* this will work. However if not use the chocoAdminTask as follows:
 >
-> ```
+> ```groovy
 > chocoAdminTask {
 >   command = 'install'
 >   args = ['git', '/NoAutoCrlf', '/WindowsTerminal', '/SChannel', '-y'] 
