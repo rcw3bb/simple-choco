@@ -26,7 +26,19 @@ plugins {
 > Expect to see the available tasks like the following:
 >
 > ```
-> 
+> Simple Chocolatey tasks
+> -----------------------
+> chocoAddSource - Adds a source to where chocolatey search for a package.
+> chocoAdminTask - Executes any valid chocolatey commands in administration mode.
+> chocoInstall - Installs packages from the chocolatey sources.
+> chocoListInstalled - Lists locally installed packages by chocolatey.
+> chocoRemoveSource - Removes a source to where chocolatey search for a package.
+> chocoSourceList - Displays the sources that the chocolatey is using.
+> chocoTask - Executes any valid chocolatey commands.
+> chocoUninstall - Uninstalls some packages installed by chocolatey.
+> chocoUpgrade - Upgrades some installed chocolatey packages
+> chocoUpgradeChoco - Upgrades the current chocolatey.
+> chocoVersion - Displays the chocolatey version.
 > ```
 
 ## CHOCOLATEY_HOME Environment Variable
@@ -94,11 +106,20 @@ choco install git /NoAutoCrlf /WindowsTerminal /SChannel -y
 **Use the task itself using the following:**
 
 ```groovy
-chocoTasks {
+chocoTask {
   command = 'install'
   args = ['git', '/NoAutoCrlf', '/WindowsTerminal', '/SChannel', '-y'] 
 }
 ```
+
+> If you are *running gradle in administration mode* this will work. However if not use the chocoAdminTask as follows:
+>
+> ```
+> chocoAdminTask {
+>   command = 'install'
+>   args = ['git', '/NoAutoCrlf', '/WindowsTerminal', '/SChannel', '-y'] 
+> }
+> ```
 
 **Using the child task chocoInstall with the following:**
 
@@ -156,6 +177,9 @@ task installSoftwares(type: ChocoInstallTask ) {
 | --------------- | ------------- | ------- | ------- | ------- |
 | chocoAddSource | sourceName |String  | Yes         |The task for adding a chocolatey source repository.  |
 |  | url |String | | |
+| chocoAdminTask | args |String[] | Yes | The task for executing a choco commands in administration mode. |
+| | command |String | | |
+| | zargs |String[] | | |
 | chocoInstall | packages |String[]  |Yes  |The task for installing packages.  |
 | chocoListInstalled |  |||The task for listing install packages with choco.|
 | chocoRemoveSource | sourceName |String  |Yes  |The task for removing a chocolatey source repository.  |
@@ -167,6 +191,8 @@ task installSoftwares(type: ChocoInstallTask ) {
 | chocoUpgradeChoco |          |  | Yes | The task for upgrading the chocolatey application. |
 | chocoUpgrade | packages  | String[] | Yes | The task for upgrading packages. |
 | chocoVersion |  |  |  | The task for displaying the chocolatey version. |
+
+> All tasks in **admin mode** will be run in **administration** to do its job. Expect to see windows dialog the allow it to make changes.
 
 ## License
 
