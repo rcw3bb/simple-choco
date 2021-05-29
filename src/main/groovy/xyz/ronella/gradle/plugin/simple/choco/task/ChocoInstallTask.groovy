@@ -9,7 +9,7 @@ import xyz.ronella.gradle.plugin.simple.choco.SimpleChocoPluginExtension
  * @author Ron Webb
  * @since v1.0.0
  */
-class ChocoInstallTask extends ChocoTask {
+class ChocoInstallTask extends ChocoAdminTask {
 
     protected String[] packages
 
@@ -26,7 +26,6 @@ class ChocoInstallTask extends ChocoTask {
         super()
         description = 'Installs packages from the chocolatey sources.'
         internalCommand = 'install'
-        isAdminMode = true
         hasLogging = true
     }
 

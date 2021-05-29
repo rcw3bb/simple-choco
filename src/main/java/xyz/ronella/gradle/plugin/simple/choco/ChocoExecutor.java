@@ -105,7 +105,8 @@ public class ChocoExecutor {
                         }
                     }
                     else {
-                        System.out.println("Automatic installation is not possible or it is disabled.");
+                        String missingChocoExecutable = String.format("Cannot find %s and automatic installation is disabled, chocoHome property was set or CHOCOLATEY_HOME environment variable exists.", ChocoInstaller.EXECUTABLE);
+                        System.out.println(missingChocoExecutable);
                     }
                 } catch (ChocoInstallException cie) {
                     System.out.println("Chocolatey installation failed.");
