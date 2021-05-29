@@ -143,16 +143,20 @@ public class ChocoExecutor {
         return fullCommand;
     }
 
-    private List<String> generateLoggingArg() {
+    private String getLogFile() {
         List<String> allArgs = new ArrayList<>();
         File chocoLogDir = Paths.get(System.getenv("LOCALAPPDATA"), "simple-choco").toFile();
         if (!chocoLogDir.exists()) {
             chocoLogDir.mkdirs();
         }
         File chocoLogFile = Paths.get(chocoLogDir.getAbsolutePath(), "chocolatey.log").toFile();
+        return chocoLogFile.getAbsolutePath();
+    }
 
+    private List<String> generateLoggingArg(String logFile) {
+        List<String> allArgs = new ArrayList<>();
         allArgs.add("--log-file");
-        allArgs.add(chocoLogFile.getAbsolutePath());
+        allArgs.add(logFile);
         return allArgs;
     }
 
@@ -165,14 +169,17 @@ public class ChocoExecutor {
         allArgs.addAll(args);
         allArgs.addAll(zArgs);
 
-        List<String> forLogging = new ArrayList<>();
-        forLogging.add(executable);
-        forLogging.addAll(allArgs);
+        List<String> commandToRun = new ArrayList<>();
+        commandToRun.add(executable);
+        commandToRun.addAll(allArgs);
 
-        System.out.println(String.join(" ", forLogging));
+        String logFile = getLogFile();
+
+        System.out.println(String.join(" ", commandToRun));
 
         if (!isNoop && hasLogging) {
-            allArgs.addAll(generateLoggingArg());
+            allArgs.addAll(generateLoggingArg(logFile));
+            System.out.println(String.format("Log file: %s", logFile));
         }
 
         if (isAdminMode) {
