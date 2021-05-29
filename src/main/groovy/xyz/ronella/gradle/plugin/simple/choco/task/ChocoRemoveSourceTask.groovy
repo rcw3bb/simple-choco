@@ -1,0 +1,37 @@
+package xyz.ronella.gradle.plugin.simple.choco.task
+
+import org.gradle.api.tasks.Input
+
+/**
+ * A convenience task for removing a choco source.
+ *
+ * @author Ron Webb
+ * @since v1.0.0
+ */
+class ChocoRemoveSourceTask extends ChocoAdminTask {
+
+    protected String sourceName
+
+    @Input
+    public String getSourceName() {
+        return this.sourceName
+    }
+
+    public void setSourceName(String name) {
+        this.sourceName = name
+    }
+
+    public ChocoRemoveSourceTask() {
+        super()
+        description = 'Removes a source to where chocolatey search for a package.'
+        internalCommand = 'source'
+        internalArgs = ["remove"]
+    }
+
+    @Override
+    public String executeCommand() {
+        internalArgs += String.format("-n=%s", sourceName)
+        super.executeCommand()
+    }
+
+}
