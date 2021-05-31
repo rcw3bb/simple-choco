@@ -1,5 +1,6 @@
 package xyz.ronella.gradle.plugin.simple.choco;
 
+import xyz.ronella.gradle.plugin.simple.choco.tools.Administration;
 import xyz.ronella.gradle.plugin.simple.choco.tools.CommandRunner;
 import xyz.ronella.gradle.plugin.simple.choco.tools.OSType;
 
@@ -43,7 +44,7 @@ public class ChocoExecutor {
         isAutoInstall = builder.isAutoInstall;
         chocoHome = builder.chocoHome;
         isNoop = builder.isNoop;
-        isAdminMode = builder.isAdminMode;
+        isAdminMode = !Administration.isElevatedMode() && builder.isAdminMode;
         command = builder.command;
         args = builder.args;
         zArgs = builder.zArgs;
