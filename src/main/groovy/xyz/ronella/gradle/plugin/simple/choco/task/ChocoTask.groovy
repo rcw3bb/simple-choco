@@ -6,6 +6,7 @@ import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.TaskAction
 import xyz.ronella.gradle.plugin.simple.choco.ChocoExecutor
 import xyz.ronella.gradle.plugin.simple.choco.SimpleChocoPluginExtension
+import xyz.ronella.gradle.plugin.simple.choco.tools.Administration
 
 /**
  * The simple-choco base task.
@@ -79,6 +80,8 @@ class ChocoTask extends DefaultTask {
             .addArgs(internalZArgs)
             .addZArgs(zArgs)
             .addLogging(hasLogging)
+            .addRunningOnAdmin(Administration.isElevatedMode())
+            .addForceAdminMode(pluginExt.forceAdminMode)
             .build()
 
         executor.execute();

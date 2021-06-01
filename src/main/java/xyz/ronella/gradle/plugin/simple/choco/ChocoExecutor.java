@@ -1,6 +1,5 @@
 package xyz.ronella.gradle.plugin.simple.choco;
 
-import xyz.ronella.gradle.plugin.simple.choco.tools.Administration;
 import xyz.ronella.gradle.plugin.simple.choco.tools.CommandRunner;
 import xyz.ronella.gradle.plugin.simple.choco.tools.OSType;
 
@@ -32,6 +31,8 @@ public class ChocoExecutor {
     private final List<String> args;
     private final List<String> zArgs;
     private boolean hasLogging;
+    private final boolean isRunningOnAdmin;
+    private final boolean forceAdminMode;
 
     /**
      * Creates an instance of ChocoExecutor
@@ -44,11 +45,14 @@ public class ChocoExecutor {
         isAutoInstall = builder.isAutoInstall;
         chocoHome = builder.chocoHome;
         isNoop = builder.isNoop;
-        isAdminMode = !Administration.isElevatedMode() && builder.isAdminMode;
         command = builder.command;
         args = builder.args;
         zArgs = builder.zArgs;
         hasLogging = builder.hasLogging;
+        isRunningOnAdmin = builder.isRunningOnAdmin;
+        forceAdminMode = builder.forceAdminMode;
+        isAdminMode = (!isRunningOnAdmin || forceAdminMode) && builder.isAdminMode;
+
         prepareExecutables();
     }
 
@@ -242,6 +246,8 @@ public class ChocoExecutor {
         private final List<String> args;
         private final List<String> zArgs;
         private boolean hasLogging;
+        private boolean isRunningOnAdmin;
+        private boolean forceAdminMode;
 
         private ChocoExecutorBuilder() {
             args = new ArrayList<>();
@@ -353,6 +359,32 @@ public class ChocoExecutor {
          */
         public ChocoExecutorBuilder addLogging(boolean hasLogging) {
             this.hasLogging = hasLogging;
+            return this;
+        }
+
+        /**
+         * Adds an indication that the choco is already running on administration mode.
+         * @param runningOnAdmin True if running on administration mode.
+         *
+         * @return An instance of the builder.
+         *
+         * @since 1.1.0
+         */
+        public ChocoExecutorBuilder addRunningOnAdmin(boolean runningOnAdmin) {
+            this.isRunningOnAdmin = runningOnAdmin;
+            return this;
+        }
+
+        /**
+         * Adds an indication that the choco is being force to run in admin mode.
+         * @param forceAdminMode True if running on to force administration mode.
+         *
+         * @return An instance of the builder.
+         *
+         * @since 1.1.0
+         */
+        public ChocoExecutorBuilder addForceAdminMode(boolean forceAdminMode) {
+            this.forceAdminMode = forceAdminMode;
             return this;
         }
 
