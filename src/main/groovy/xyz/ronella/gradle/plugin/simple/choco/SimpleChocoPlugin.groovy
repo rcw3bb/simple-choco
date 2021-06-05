@@ -7,6 +7,7 @@ import xyz.ronella.gradle.plugin.simple.choco.task.ChocoAdminTask
 import xyz.ronella.gradle.plugin.simple.choco.task.ChocoInstallTask
 import xyz.ronella.gradle.plugin.simple.choco.task.ChocoListInstalledTask
 import xyz.ronella.gradle.plugin.simple.choco.task.ChocoRemoveSourceTask
+import xyz.ronella.gradle.plugin.simple.choco.task.ChocoScriptAdminTask
 import xyz.ronella.gradle.plugin.simple.choco.task.ChocoScriptTask
 import xyz.ronella.gradle.plugin.simple.choco.task.ChocoSourceListTask
 import xyz.ronella.gradle.plugin.simple.choco.task.ChocoTask
@@ -32,6 +33,7 @@ class SimpleChocoPlugin implements Plugin<Project> {
         project.task('chocoListInstalled', type: ChocoListInstalledTask)
         project.task('chocoRemoveSource', type: ChocoRemoveSourceTask)
         project.task('chocoScript', type: ChocoScriptTask)
+        project.task('chocoScriptAdmin', type: ChocoScriptAdminTask)
         project.task('chocoSourceList', type: ChocoSourceListTask)
         project.task('chocoTask', type: ChocoTask)
         project.task('chocoUninstall', type: ChocoUninstallTask)
