@@ -61,6 +61,14 @@ class ChocoTask extends DefaultTask {
         description = 'Executes any valid chocolatey commands.'
     }
 
+    protected boolean isScriptMode() {
+        return false
+    }
+
+    protected List<List<String>> getPackagesToScript() {
+        return new ArrayList<>();
+    }
+
     @TaskAction
     public String executeCommand() {
         SimpleChocoPluginExtension pluginExt = project.extensions.simple_choco
@@ -82,8 +90,12 @@ class ChocoTask extends DefaultTask {
             .addLogging(hasLogging)
             .addRunningOnAdmin(Administration.isElevatedMode())
             .addForceAdminMode(pluginExt.forceAdminMode)
+            .addScriptMode(isScriptMode())
+            .addPackages(getPackagesToScript())
+            .addTaskName(name)
+            .addNoScriptDeletion(pluginExt.noScriptDeletion)
             .build()
 
-        executor.execute();
+        executor.execute()
     }
 }
