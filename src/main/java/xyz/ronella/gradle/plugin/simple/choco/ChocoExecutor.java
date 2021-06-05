@@ -223,7 +223,7 @@ public class ChocoExecutor {
         if (isAdminMode && !isScriptMode) {
             fullCommand.addAll(adminModeCommand(executable, allArgs));
         } else {
-            fullCommand.add(isScriptMode ? singleQuote(executable) : executable);
+            fullCommand.add(executable);
             fullCommand.addAll(allArgs);
         }
         return fullCommand;

@@ -1,7 +1,6 @@
 package xyz.ronella.gradle.plugin.simple.choco.task
 
 import org.gradle.api.tasks.Input
-import org.gradle.internal.impldep.com.google.common.base.Strings
 
 /**
  * The base class of all the task in script mode.
@@ -27,18 +26,18 @@ class ChocoScriptTask extends ChocoTask {
     }
 
     @Override
-    protected List<List<String>> getPackagesToScript() {
+    protected List<List<String>> packagesToScript() {
         return packages
     }
 
     @Override
-    protected boolean isScriptMode() {
+    protected boolean scriptMode() {
         return true
     }
 
     @Override
     public String executeCommand() {
-        if (Strings.isNullOrEmpty(command)) {
+        if (command==null || command.size()<1) {
             println "The command parameter is required"
         }
         else if (packages.size()<1) {
