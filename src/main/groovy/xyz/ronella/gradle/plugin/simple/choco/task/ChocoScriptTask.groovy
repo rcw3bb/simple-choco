@@ -37,7 +37,7 @@ class ChocoScriptTask extends ChocoTask {
 
     @Override
     public String executeCommand() {
-        if (command==null || command.size()<1) {
+        if (internalCommand==null && (command==null || command.size()<1)) {
             println "The command parameter is required"
         }
         else if (packages.size()<1) {

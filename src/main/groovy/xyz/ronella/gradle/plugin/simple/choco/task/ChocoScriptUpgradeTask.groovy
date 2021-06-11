@@ -3,16 +3,16 @@ package xyz.ronella.gradle.plugin.simple.choco.task
 import xyz.ronella.gradle.plugin.simple.choco.SimpleChocoPluginExtension
 
 /**
- * A convenience task for upgrading a choco package.
+ * A convenience task for upgrading choco packages by script.
  *
  * @author Ron Webb
- * @since v1.0.0
+ * @since 1.1.0
  */
-class ChocoUpgradeTask extends ChocoInstallTask {
+class ChocoScriptUpgradeTask extends ChocoScriptInstallTask {
 
-    public ChocoUpgradeTask() {
+    public ChocoScriptUpgradeTask() {
         super()
-        description = 'Upgrade installed chocolatey packages.'
+        description = 'Upgrade installed chocolatey packages by script.'
         internalCommand = 'upgrade'
     }
 
@@ -21,5 +21,4 @@ class ChocoUpgradeTask extends ChocoInstallTask {
         SimpleChocoPluginExtension pluginExt = project.extensions.simple_choco
         internalZArgs = pluginExt.defaultUpgradeArgs
     }
-
 }
