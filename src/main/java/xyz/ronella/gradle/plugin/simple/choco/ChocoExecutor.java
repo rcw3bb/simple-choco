@@ -10,7 +10,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Consumer;
-import java.util.function.Function;
 import java.util.function.Supplier;
 
 /**
@@ -31,6 +30,12 @@ public class ChocoExecutor {
     private final List<String> args;
     private final List<String> zArgs;
     private boolean hasLogging;
+    private final boolean isRunningOnAdmin;
+    private final boolean forceAdminMode;
+    private final String taskName;
+    private final boolean isScriptMode;
+    private final List<List<String>> packages;
+    private final boolean noScriptDeletion;
 
     /**
      * Creates an instance of ChocoExecutor
@@ -43,11 +48,18 @@ public class ChocoExecutor {
         isAutoInstall = builder.isAutoInstall;
         chocoHome = builder.chocoHome;
         isNoop = builder.isNoop;
-        isAdminMode = builder.isAdminMode;
         command = builder.command;
         args = builder.args;
         zArgs = builder.zArgs;
         hasLogging = builder.hasLogging;
+        isRunningOnAdmin = builder.isRunningOnAdmin;
+        forceAdminMode = builder.forceAdminMode;
+        isAdminMode = (!isRunningOnAdmin || forceAdminMode) && builder.isAdminMode;
+        taskName = builder.taskName;
+        isScriptMode = builder.isScriptMode;
+        packages = builder.packages;
+        noScriptDeletion = builder.noScriptDeletion;
+
         prepareExecutables();
     }
 
@@ -119,37 +131,58 @@ public class ChocoExecutor {
         return Optional.empty();
     }
 
+    private List<String> getPowershellCommand() {
+        List<String> shellCommand = new ArrayList<>();
+        shellCommand.add("powershell.exe");
+        shellCommand.add("-NoProfile");
+        shellCommand.add("-InputFormat");
+        shellCommand.add("None");
+        shellCommand.add("-ExecutionPolicy") ;
+        shellCommand.add("Bypass");
+        shellCommand.add("-Command");
+
+        return new ArrayList<>(shellCommand);
+    }
+
+    private String quadQuote(String text) {
+        return String.format("\"\"\"\"%s\"\"\"\"", text);
+    }
+
+    private String doubleQuote(String text) {
+        return String.format("\"\"%s\"\"", text);
+    }
+
+    private String singleQuote(String text) {
+        return String.format("\"%s\"", text);
+    }
+
     private List<String> adminModeCommand(String executable, List<String> allArgs) {
-        List<String> fullCommand = new ArrayList<>();
-        Function<String, String> quadQuote = (___text -> String.format("\"\"\"\"%s\"\"\"\"", ___text));
+        List<String> fullCommand = getPowershellCommand();
 
         StringBuilder sbArgs = new StringBuilder();
-        allArgs.forEach(___arg -> sbArgs.append(sbArgs.length()>0 ? ",": "").append(quadQuote.apply(___arg)));
+        allArgs.forEach(___arg -> sbArgs.append(sbArgs.length()>0 ? ",": "").append(quadQuote(___arg)));
 
         StringBuilder sbActualCommand = new StringBuilder("\"Start-Process ");
-        sbActualCommand.append(quadQuote.apply(executable));
+        sbActualCommand.append(quadQuote(executable));
         sbActualCommand.append(" -Wait -Verb runas");
         sbActualCommand.append(sbArgs.length()==0 ? "": " -argumentlist ").append(sbArgs.toString());
         sbActualCommand.append("\"");
 
-        fullCommand.add("powershell.exe");
-        fullCommand.add("-NoProfile");
-        fullCommand.add("-InputFormat");
-        fullCommand.add("None");
-        fullCommand.add("-ExecutionPolicy") ;
-        fullCommand.add("Bypass");
-        fullCommand.add("-Command");
         fullCommand.add(sbActualCommand.toString());
         return fullCommand;
     }
 
-    private String getLogFile() {
-        List<String> allArgs = new ArrayList<>();
-        File chocoLogDir = Paths.get(System.getenv("LOCALAPPDATA"), "simple-choco").toFile();
-        if (!chocoLogDir.exists()) {
-            chocoLogDir.mkdirs();
+    private File getDataDirectory() {
+        File dataDirectory = Paths.get(System.getenv("LOCALAPPDATA"), "simple-choco").toFile();
+        if (!dataDirectory.exists()) {
+            dataDirectory.mkdirs();
         }
-        File chocoLogFile = Paths.get(chocoLogDir.getAbsolutePath(), "chocolatey.log").toFile();
+        return dataDirectory;
+    }
+
+    private String getLogFile() {
+        File dataDir = getDataDirectory();
+        File chocoLogFile = Paths.get(dataDir.getAbsolutePath(), "chocolatey.log").toFile();
         return chocoLogFile.getAbsolutePath();
     }
 
@@ -161,11 +194,16 @@ public class ChocoExecutor {
     }
 
     private List<String> prepareCommand(File chocoExecutable) {
+        return prepareCommand(chocoExecutable, new ArrayList<>());
+    }
+
+    private List<String> prepareCommand(File chocoExecutable, List<String> packageInfo) {
         String executable = chocoExecutable.getAbsolutePath();
         List<String> allArgs = new ArrayList<>();
         List<String> fullCommand = new ArrayList<>();
 
         Optional.ofNullable(command).ifPresent(allArgs::add);
+        allArgs.addAll(packageInfo);
         allArgs.addAll(args);
         allArgs.addAll(zArgs);
 
@@ -182,7 +220,7 @@ public class ChocoExecutor {
             System.out.println(String.format("Log file: %s", logFile));
         }
 
-        if (isAdminMode) {
+        if (isAdminMode && !isScriptMode) {
             fullCommand.addAll(adminModeCommand(executable, allArgs));
         } else {
             fullCommand.add(executable);
@@ -191,12 +229,7 @@ public class ChocoExecutor {
         return fullCommand;
     }
 
-    /**
-     * Actually execute the assembled choco command.
-     *
-     * @return The command that wil be exeecuted.
-     */
-    public String execute() {
+    private String executeSingleCommand() {
         StringBuilder sbCommand = new StringBuilder();
         executable().ifPresent(___executable -> {
             List<String> fullCommand = prepareCommand(___executable);
@@ -214,6 +247,107 @@ public class ChocoExecutor {
             }
         });
         return sbCommand.toString();
+    }
+
+    private List<String> buildScriptCommand(String scriptFullPath) {
+        List<String> fullCommand = getPowershellCommand();
+        String executable = "powershell.exe";
+
+        if (isAdminMode) {
+            StringBuilder sbActualCommand = new StringBuilder("\"Start-Process ");
+            sbActualCommand.append(executable);
+            sbActualCommand.append(" -Wait -Verb runas");
+            sbActualCommand.append(" -argumentlist \"\"\"\"-NoProfile\"\"\"\",\"\"\"\"-InputFormat\"\"\"\",\"\"\"\"None\"\"\"\",\"\"\"\"-ExecutionPolicy\"\"\"\",\"\"\"\"Bypass\"\"\"\",\"\"\"\"-Command\"\"\"\",");
+            sbActualCommand.append(quadQuote(String.format("%s %s", executable, doubleQuote(quadQuote(scriptFullPath)))));
+            sbActualCommand.append("\"");
+
+            fullCommand.add(sbActualCommand.toString());
+        }
+        else {
+            fullCommand.add(singleQuote(scriptFullPath));
+        }
+        return fullCommand;
+    }
+
+    private void saveAndExecuteScriptFile(String script, Consumer<String> executeLogic) throws ChocoScriptException {
+        File dataDir = getDataDirectory();
+        File scriptFile = Paths.get(dataDir.getAbsolutePath(), String.format("%s.ps1", taskName)).toFile();
+
+        try {
+            String scriptFullPath = scriptFile.getAbsolutePath();
+
+            if (!scriptFile.exists()) {
+                try {
+                    scriptFile.createNewFile();
+                } catch (IOException ioe) {
+                    System.err.println(String.format("Cannot create %s", scriptFullPath));
+                    throw new ChocoScriptException(ioe);
+                }
+            }
+
+            try (FileWriter writer = new FileWriter(scriptFile)) {
+                writer.write(script);
+                writer.flush();
+            } catch (IOException ioe) {
+                System.err.println(String.format("Cannot write to %s", scriptFullPath));
+                throw new ChocoScriptException(ioe);
+            }
+
+            executeLogic.accept(scriptFullPath);
+        }
+        finally {
+            if (!noScriptDeletion && scriptFile.exists()) {
+                scriptFile.delete();
+            }
+        }
+    }
+
+    private String executeScriptCommands() {
+        StringBuilder sbCommand = new StringBuilder();
+        executable().ifPresent(___executable -> {
+            packages.forEach(___package -> {
+                List<String> fullCommand = prepareCommand( ___executable, ___package);
+                sbCommand.append(String.join(" ", fullCommand).trim());
+                sbCommand.append("\n");
+            });
+            try {
+                saveAndExecuteScriptFile(sbCommand.toString(), ___scriptFullPath -> {
+                    List<String> fullCommand = buildScriptCommand(___scriptFullPath);
+
+                    if (isNoop) {
+                        sbCommand.append(String.join(" ", fullCommand));
+                        System.out.println(String.format("Scripted on %s", ___scriptFullPath));
+                    }
+                    else {
+                        CommandRunner.runCommand((___output, ___error)-> {
+                            if (___error.length()>0) {
+                                System.err.println(___error);
+                            }
+                            else {
+                                System.out.println(___output);
+                            }
+                        }, fullCommand.toArray(new String[]{}));
+                    }
+                });
+            } catch (ChocoScriptException chocoScriptException) {
+                chocoScriptException.printStackTrace(System.err);
+            }
+        });
+        return sbCommand.toString();
+    }
+
+    /**
+     * Actually execute the assembled choco command.
+     *
+     * @return The command that wil be exeecuted.
+     */
+    public String execute() {
+        if (isScriptMode) {
+            return executeScriptCommands();
+        }
+        else {
+            return executeSingleCommand();
+        }
     }
 
     /**
@@ -241,6 +375,12 @@ public class ChocoExecutor {
         private final List<String> args;
         private final List<String> zArgs;
         private boolean hasLogging;
+        private boolean isRunningOnAdmin;
+        private boolean forceAdminMode;
+        private String taskName;
+        private boolean isScriptMode;
+        private List<List<String>> packages;
+        private boolean noScriptDeletion;
 
         private ChocoExecutorBuilder() {
             args = new ArrayList<>();
@@ -352,6 +492,84 @@ public class ChocoExecutor {
          */
         public ChocoExecutorBuilder addLogging(boolean hasLogging) {
             this.hasLogging = hasLogging;
+            return this;
+        }
+
+        /**
+         * Adds an indication that the choco is already running on administration mode.
+         * @param runningOnAdmin True if running on administration mode.
+         *
+         * @return An instance of the builder.
+         *
+         * @since 1.1.0
+         */
+        public ChocoExecutorBuilder addRunningOnAdmin(boolean runningOnAdmin) {
+            this.isRunningOnAdmin = runningOnAdmin;
+            return this;
+        }
+
+        /**
+         * Adds an indication that the choco is being force to run in admin mode.
+         * @param forceAdminMode True if running on to force administration mode.
+         *
+         * @return An instance of the builder.
+         *
+         * @since 1.1.0
+         */
+        public ChocoExecutorBuilder addForceAdminMode(boolean forceAdminMode) {
+            this.forceAdminMode = forceAdminMode;
+            return this;
+        }
+
+        /**
+         * Adds an indication that the choco commands will be scripted.
+         * @param scriptMode True the commands will be scripted.
+         *
+         * @return An instance of the builder.
+         *
+         * @since 1.1.0
+         */
+        public ChocoExecutorBuilder addScriptMode(boolean scriptMode) {
+            this.isScriptMode = scriptMode;
+            return this;
+        }
+
+        /**
+         * Adds the name of the task being executed.
+         * @param taskName The name of the task.
+         *
+         * @return An instance of the builder.
+         *
+         * @since 1.1.0
+         */
+        public ChocoExecutorBuilder addTaskName(String taskName) {
+            this.taskName = taskName;
+            return this;
+        }
+
+        /**
+         * The the packages to be scripted.
+         * @param packages The name of the task.
+         *
+         * @return An instance of the builder.
+         *
+         * @since 1.1.0
+         */
+        public ChocoExecutorBuilder addPackages(List<List<String>> packages) {
+            this.packages = packages;
+            return this;
+        }
+
+        /**
+         * Indicates that the script generated will not be deleted.
+         * @param noScriptDeletion The name of the task.
+         *
+         * @return An instance of the builder.
+         *
+         * @since 1.1.0
+         */
+        public ChocoExecutorBuilder addNoScriptDeletion(boolean noScriptDeletion) {
+            this.noScriptDeletion = noScriptDeletion;
             return this;
         }
 

@@ -6,6 +6,7 @@ import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.TaskAction
 import xyz.ronella.gradle.plugin.simple.choco.ChocoExecutor
 import xyz.ronella.gradle.plugin.simple.choco.SimpleChocoPluginExtension
+import xyz.ronella.gradle.plugin.simple.choco.tools.Administration
 
 /**
  * The simple-choco base task.
@@ -60,6 +61,14 @@ class ChocoTask extends DefaultTask {
         description = 'Executes any valid chocolatey commands.'
     }
 
+    protected boolean scriptMode() {
+        return false
+    }
+
+    protected List<List<String>> packagesToScript() {
+        return new ArrayList<>();
+    }
+
     @TaskAction
     public String executeCommand() {
         SimpleChocoPluginExtension pluginExt = project.extensions.simple_choco
@@ -79,8 +88,14 @@ class ChocoTask extends DefaultTask {
             .addArgs(internalZArgs)
             .addZArgs(zArgs)
             .addLogging(hasLogging)
+            .addRunningOnAdmin(Administration.isElevatedMode())
+            .addForceAdminMode(pluginExt.forceAdminMode)
+            .addScriptMode(scriptMode())
+            .addPackages(packagesToScript())
+            .addTaskName(name)
+            .addNoScriptDeletion(pluginExt.noScriptDeletion)
             .build()
 
-        executor.execute();
+        executor.execute()
     }
 }

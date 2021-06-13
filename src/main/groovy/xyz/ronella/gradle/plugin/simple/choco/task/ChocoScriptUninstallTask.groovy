@@ -3,16 +3,16 @@ package xyz.ronella.gradle.plugin.simple.choco.task
 import xyz.ronella.gradle.plugin.simple.choco.SimpleChocoPluginExtension
 
 /**
- * A convenience task for uninstalling a choco package.
+ * A convenience task for uninstalling choco packages by script.
  *
  * @author Ron Webb
- * @since v1.0.0
+ * @since 1.1.0
  */
-class ChocoUninstallTask extends ChocoInstallTask {
+class ChocoScriptUninstallTask extends ChocoScriptInstallTask {
 
-    public ChocoUninstallTask() {
+    public ChocoScriptUninstallTask() {
         super()
-        description = 'Uninstall packages installed by chocolatey.'
+        description = 'Uninstall packages installed by chocolatey by script.'
         internalCommand = 'uninstall'
     }
 

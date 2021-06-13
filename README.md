@@ -13,7 +13,7 @@ In your **build.gradle** file add the following plugin:
 
 ```groovy
 plugins {
-    id "xyz.ronella.simple-choco" version "1.0.0"
+    id "xyz.ronella.simple-choco" version "1.1.0"
 }
 ```
 
@@ -30,13 +30,18 @@ plugins {
 > -----------------------
 > chocoAddSource - Adds a source to where chocolatey search for a package.
 > chocoAdminTask - Executes any valid chocolatey commands in administration mode.
-> chocoInstall - Installs packages from the chocolatey sources.
+> chocoInstall - Install packages from the chocolatey sources.
 > chocoListInstalled - Lists locally installed packages by chocolatey.
 > chocoRemoveSource - Removes a source to where chocolatey search for a package.
+> chocoScript - Creates a script that contains the packages before executing
+> chocoScriptAdmin - Creates a script that contains the packages before executing in administration mode
+> chocoScriptInstall - Install packages from chocolatey sources by script.
+> chocoScriptUninstall - Uninstall packages installed by chocolatey by script.
+> chocoScriptUpgrade - Upgrade installed chocolatey packages by script.
 > chocoSourceList - Displays the sources that the chocolatey is using.
 > chocoTask - Executes any valid chocolatey commands.
-> chocoUninstall - Uninstalls some packages installed by chocolatey.
-> chocoUpgrade - Upgrades some installed chocolatey packages
+> chocoUninstall - Uninstall packages installed by chocolatey.
+> chocoUpgrade - Upgrade installed chocolatey packages.
 > chocoUpgradeChoco - Upgrades the current chocolatey.
 > chocoVersion - Displays the chocolatey version.
 > ```
@@ -53,6 +58,7 @@ The first location that the plugin will try to look for the **chocolatey executa
 | simple_choco.defaultInstallArgs | Holds the arguments that will always be present on any **chocoInstall** tasks. | String[] | empty |
 | simple_choco.defaultUninstallArgs | Holds the arguments that will always be present on any **chocoUninstall** tasks. | String[] | empty |
 | simple_choco.defaultUpgradeArgs | Holds the arguments that will always be present on any **chocoUpgrade** tasks. | String[] | empty |
+| simple_choco.forceAdminMode | If the autodetection of administration mode failed set this to true. | boolean | false |
 | simple_choco.isAutoInstall | On the first use of any choco tasks and the choco executable was not found. The plugin will try to **install the chocolatey application**. If this process failed, try to install the chocolatey application manually and set the CHOCOLATEY_HOME environment variable accordingly. | boolean | true |
 
 ## General Syntax
@@ -152,17 +158,33 @@ task installNotepadPlusPlus(type: ChocoTask) {
 
 ``` groovy
 task installSoftwares(type: ChocoInstallTask ) {
-  packages = ['notepadplusplus', 'lzip']
+  packages = ['git', 'notepadplusplus', 'lzip']
 }
 ```
 
+> You don't need to set the **command property** because it was already preset with **install**.
+
+**Create your own task of type ChocoScriptInstallTask for convenience like the following:**
+
+``` groovy
+task installSoftwares(type: ChocoScriptInstallTask ) {
+  packages = [
+      		  ['git', '/NoAutoCrlf', '/WindowsTerminal', '/SChannel'],
+      		  ['notepadplusplus'],
+              ['lzip']
+             ]
+}
+```
+
+> The previous task will create a **temporary script that contains multiple choco commands** based on the value of the packages property. The difference between this against **ChocoInstallTask** is that you can specify all the parameters needed for each package. 
+>
 > You don't need to set the **command property** because it was already preset with **install**.
 
 ## Sample build.gradle File
 
 ``` groovy
 plugins {
-  id "xyz.ronella.simple-choco" version "1.0.0"
+  id "xyz.ronella.simple-choco" version "1.1.0"
 }
 
 simple_choco.defaultInstallArgs=['-y']
@@ -183,6 +205,11 @@ task installSoftwares(type: ChocoInstallTask ) {
 | chocoInstall | packages |String[]  |Yes  |The task for installing packages.  |
 | chocoListInstalled |  |||The task for listing install packages with choco.|
 | chocoRemoveSource | sourceName |String  |Yes  |The task for removing a chocolatey source repository.  |
+| chocoScript | packages |List<List<String>> | |The task that generates a temporary script file that contains the command packages to be executed in sequence. <br /><br />Note this task requires the **command** property. |
+| chocoScriptAdmin | packages |List<List<String>> |Yes |The task that generates a temporary script file that contains the command packages to be executed in sequence in administration mode.<br />Note this task requires the **command** property. |
+| chocoScriptInstall | packages |List<List<String>> |Yes |The task for installing packages using a temporary script. |
+| chocoScriptUninstall | packages |List<List<String>> |Yes |The task for uninstalling packages using a temporary script. |
+| chocoScriptUpgrade | packages |List<List<String>> |Yes |The task for upgrading packages using a temporary script. |
 | chocoSourceList |     |  |  | The task for displaying the sources the chocolatey is using. |
 | chocoTask | args |String[]  |  |The task for executing a choco commands.  |
 |  | command | String    |     |     |
