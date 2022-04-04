@@ -18,7 +18,7 @@ import java.util.function.Supplier;
  * @author Ron Webb
  * @since v1.0.0
  */
-public class ChocoExecutor {
+public final class ChocoExecutor {
 
     private final OSType osType;
     private boolean isAutoInstall;
@@ -96,7 +96,7 @@ public class ChocoExecutor {
         }
 
         return null;
-    };
+    }
 
     private Optional<File> executable() {
         if (OSType.Windows.equals(osType)) {
@@ -112,23 +112,29 @@ public class ChocoExecutor {
                             File installLocation = ChocoInstaller.DEFAULT_INSTALL_LOCATION.toFile();
                             if (!installLocation.exists()) {
                                 ChocoInstaller.install();
-                                return executable();
+                                if (installLocation.exists()) {
+                                    return executable();
+                                }
+                                else {
+                                    throw new ChocoInstallException();
+                                }
                             }
                         }
                     }
                     else {
                         String missingChocoExecutable = String.format("Cannot find %s and automatic installation is disabled, chocoHome property was set or CHOCOLATEY_HOME environment variable exists.", ChocoInstaller.EXECUTABLE);
-                        System.out.println(missingChocoExecutable);
+                        System.err.println(missingChocoExecutable);
                     }
                 } catch (ChocoInstallException cie) {
-                    System.out.println("Chocolatey installation failed.");
+                    System.err.println("Chocolatey automatic installation failed. Install chocolatey manually.");
                 }
             }
         }
         else {
-            System.out.println(String.format("%s OS is required.", OSType.Windows));
+            System.err.printf("%s OS is required.%n", OSType.Windows);
         }
-        return Optional.empty();
+
+        throw new ChocoExecutableException();
     }
 
     private List<String> getPowershellCommand() {
@@ -281,7 +287,7 @@ public class ChocoExecutor {
                     scriptFile.createNewFile();
                 } catch (IOException ioe) {
                     System.err.println(String.format("Cannot create %s", scriptFullPath));
-                    throw new ChocoScriptException(ioe);
+                    throw new ChocoScriptException(ioe.getMessage());
                 }
             }
 
@@ -290,7 +296,7 @@ public class ChocoExecutor {
                 writer.flush();
             } catch (IOException ioe) {
                 System.err.println(String.format("Cannot write to %s", scriptFullPath));
-                throw new ChocoScriptException(ioe);
+                throw new ChocoScriptException(ioe.getMessage());
             }
 
             executeLogic.accept(scriptFullPath);

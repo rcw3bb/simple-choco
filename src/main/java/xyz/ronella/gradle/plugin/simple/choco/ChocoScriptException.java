@@ -8,8 +8,8 @@ package xyz.ronella.gradle.plugin.simple.choco;
  */
 public class ChocoScriptException extends ChocoException {
 
-    public ChocoScriptException(Throwable throwable) {
-        super(throwable);
+    public ChocoScriptException(String message) {
+        super(message);
     }
 
 }

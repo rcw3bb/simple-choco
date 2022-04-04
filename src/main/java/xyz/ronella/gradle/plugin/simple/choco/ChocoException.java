@@ -1,18 +1,20 @@
 package xyz.ronella.gradle.plugin.simple.choco;
 
+import org.gradle.api.GradleException;
+
 /**
  * The base exception of simple-choco plugin.
  *
  * @author Ron Webb
  * @since v1.0.0
  */
-public class ChocoException extends Exception {
+public class ChocoException extends GradleException {
     public ChocoException() {
         super();
     }
 
-    public ChocoException(Throwable cause) {
-        super(cause);
+    public ChocoException(String message) {
+        super(message);
     }
 
 }

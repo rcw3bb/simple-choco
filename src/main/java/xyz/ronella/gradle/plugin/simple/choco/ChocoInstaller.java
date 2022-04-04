@@ -13,7 +13,7 @@ import java.util.List;
  * @author Ron Webb
  * @since v1.0.0
  */
-public class ChocoInstaller {
+public final class ChocoInstaller {
 
     private ChocoInstaller() {}
 
@@ -32,12 +32,18 @@ public class ChocoInstaller {
      */
     public static final Path DEFAULT_INSTALL_LOCATION = Paths.get(System.getenv("ProgramData"), "chocolatey");
 
+    private static Boolean CHOCO_INSTALLATION_FAILED = false;
+
+    public static Boolean hasInstallationFailed() {
+        return CHOCO_INSTALLATION_FAILED;
+    }
+
     /**
      * The command the and parameters that will install the chocolatey application.
      *
      * @return A list that contains the installation command.
      */
-    public List<String> getCommand() {
+    public List<String> getInstallCommand() {
         final String POWER_SHELL = "PowerShell.Exe";
 
         String installCommand = "\"Start-Process powershell -Wait -Verb runas -argumentlist \"\"\"\"-NoProfile\"\"\"\",\"\"\"\"-InputFormat\"\"\"\",\"\"\"\"None\"\"\"\",\"\"\"\"-ExecutionPolicy\"\"\"\",\"\"\"\"Bypass\"\"\"\",\"\"\"\"-Command\"\"\"\",\"\"\"\"[System.Net.ServicePointManager]::SecurityProtocol = 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))\"\"\"\"\"";
@@ -63,15 +69,11 @@ public class ChocoInstaller {
         System.out.println("Installing Chocolatey");
 
         ChocoInstaller chocoInstaller = new ChocoInstaller();
-        String[] command = chocoInstaller.getCommand().toArray(new String[] {});
+        String[] command = chocoInstaller.getInstallCommand().toArray(new String[] {});
 
         CommandRunner.runCommand((___output, ___error) -> {
             if (___error.length() > 0) {
-                System.out.println("Error: " + ___error);
-                System.out.println("Chocolatey automatic installation failed. Install chocolatey manually.");
-            }
-            else {
-                System.out.println("Output: " + ___output);
+                System.err.println("Error: " + ___error);
             }
         }, command);
     }
