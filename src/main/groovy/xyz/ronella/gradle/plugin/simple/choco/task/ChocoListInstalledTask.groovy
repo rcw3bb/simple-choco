@@ -6,12 +6,12 @@ package xyz.ronella.gradle.plugin.simple.choco.task
  * @author Ron Webb
  * @since v1.0.0
  */
-class ChocoListInstalledTask extends ChocoTask {
+abstract class ChocoListInstalledTask extends ChocoTask {
 
-    public ChocoListInstalledTask() {
+    ChocoListInstalledTask() {
         super()
         description = 'Lists locally installed packages by chocolatey.'
-        internalCommand = 'list'
-        internalArgs += "--local-only"
+        internalCommand.convention('list')
+        internalArgs.add('--local-only')
     }
 }

@@ -9,17 +9,17 @@ import static org.junit.jupiter.api.Assertions.assertTrue
 
 class ChocoUninstallTaskTest {
 
-    private Project project;
+    private Project project
 
     @BeforeEach
-    public void initProject() {
+    void initProject() {
         project = ProjectBuilder.builder().build()
         project.pluginManager.apply 'xyz.ronella.simple-choco'
         project.extensions.simple_choco.isNoop = true
     }
 
     @Test
-    public void noParameters() {
+    void noParameters() {
         def chocoTask = project.tasks.chocoUninstall
         chocoTask.packages = ["git"]
         String command = chocoTask.executeCommand()
@@ -28,8 +28,8 @@ class ChocoUninstallTaskTest {
     }
 
     @Test
-    public void defaultUninstallArguments() {
-        project.extensions.simple_choco.defaultUninstallArgs += ['-y']
+    void defaultUninstallArguments() {
+        project.extensions.simple_choco.defaultUninstallArgs = ['-y']
         def chocoTask = project.tasks.chocoUninstall
         chocoTask.packages = ["git"]
         String command = chocoTask.executeCommand()
@@ -38,8 +38,8 @@ class ChocoUninstallTaskTest {
     }
 
     @Test
-    public void multiplePackages() {
-        project.extensions.simple_choco.defaultUninstallArgs += ['-y']
+    void multiplePackages() {
+        project.extensions.simple_choco.defaultUninstallArgs = ['-y']
         def chocoTask = project.tasks.chocoUninstall
         chocoTask.packages = ["git", "notepadplusplus"]
         String command = chocoTask.executeCommand()

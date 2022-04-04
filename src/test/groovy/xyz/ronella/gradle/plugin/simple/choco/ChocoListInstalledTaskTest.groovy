@@ -9,17 +9,17 @@ import static org.junit.jupiter.api.Assertions.assertTrue
 
 class ChocoListInstalledTaskTest {
 
-    private Project project;
+    private Project project
 
     @BeforeEach
-    public void initProject() {
+    void initProject() {
         project = ProjectBuilder.builder().build()
         project.pluginManager.apply 'xyz.ronella.simple-choco'
         project.extensions.simple_choco.isNoop = true
     }
 
     @Test
-    public void noParameters() {
+    void noParameters() {
         def chocoTask = project.tasks.chocoListInstalled
         String command = chocoTask.executeCommand()
         String endsWith = "choco.exe list --local-only"

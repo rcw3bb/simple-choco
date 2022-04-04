@@ -1,7 +1,7 @@
 package xyz.ronella.gradle.plugin.simple.choco.task
 
+import org.gradle.api.provider.ListProperty
 import org.gradle.api.tasks.Input
-import xyz.ronella.gradle.plugin.simple.choco.SimpleChocoPluginExtension
 
 /**
  * A convenience task for installing a choco package.
@@ -9,35 +9,26 @@ import xyz.ronella.gradle.plugin.simple.choco.SimpleChocoPluginExtension
  * @author Ron Webb
  * @since v1.0.0
  */
-class ChocoInstallTask extends ChocoAdminTask {
-
-    protected String[] packages
+abstract class ChocoInstallTask extends ChocoAdminTask {
 
     @Input
-    public String[] getPackages() {
-        return packages
-    }
+    abstract ListProperty<String> getPackages();
 
-    public void setPackages(String[] packages) {
-        this.packages = packages
-    }
-
-    public ChocoInstallTask() {
+    ChocoInstallTask() {
         super()
         description = 'Install packages from the chocolatey sources.'
-        internalCommand = 'install'
-        hasLogging = true
+        internalCommand.convention('install')
+        hasLogging.convention(true)
     }
 
-    protected void setInternalZArgs() {
-        SimpleChocoPluginExtension pluginExt = project.extensions.simple_choco
-        internalZArgs = pluginExt.defaultInstallArgs
+    protected void initInternalZArgs() {
+        internalZArgs.addAll(EXTENSION.defaultInstallArgs.getOrElse([]))
     }
 
     @Override
-    public String executeCommand() {
-        setInternalZArgs()
-        internalArgs = packages
+    String executeCommand() {
+        initInternalZArgs()
+        internalArgs.addAll(packages.get())
         super.executeCommand()
     }
 }

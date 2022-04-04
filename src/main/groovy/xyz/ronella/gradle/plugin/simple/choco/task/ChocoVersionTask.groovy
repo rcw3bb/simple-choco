@@ -6,12 +6,12 @@ package xyz.ronella.gradle.plugin.simple.choco.task
  * @author Ron Webb
  * @since v1.0.0
  */
-class ChocoVersionTask extends ChocoTask {
+abstract class ChocoVersionTask extends ChocoTask {
 
-    public ChocoVersionTask() {
+    ChocoVersionTask() {
         super()
         description = 'Displays the chocolatey version.'
-        internalArgs += "--version"
+        internalArgs.add('--version')
     }
 
 }

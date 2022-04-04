@@ -1,29 +1,25 @@
 package xyz.ronella.gradle.plugin.simple.choco.task
-
-import xyz.ronella.gradle.plugin.simple.choco.SimpleChocoPluginExtension
-
 /**
  * A convenience task for installing choco packages by script.
  *
  * @author Ron Webb
  * @since 1.1.0
  */
-class ChocoScriptInstallTask extends ChocoScriptAdminTask {
+abstract class ChocoScriptInstallTask extends ChocoScriptAdminTask {
 
-    public ChocoScriptInstallTask() {
+    ChocoScriptInstallTask() {
         description = "Install packages from chocolatey sources by script."
-        internalCommand = "install"
-        hasLogging = true
+        internalCommand.convention('install')
+        hasLogging.convention(true)
     }
 
-    protected void setInternalZArgs() {
-        SimpleChocoPluginExtension pluginExt = project.extensions.simple_choco
-        internalZArgs = pluginExt.defaultInstallArgs
+    protected void initInternalZArgs() {
+        internalZArgs.addAll(EXTENSION.defaultInstallArgs.getOrElse([]))
     }
 
     @Override
-    public String executeCommand() {
-        setInternalZArgs()
+    String executeCommand() {
+        initInternalZArgs()
         super.executeCommand()
     }
 

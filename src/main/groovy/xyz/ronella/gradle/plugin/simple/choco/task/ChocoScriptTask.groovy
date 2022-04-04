@@ -1,5 +1,6 @@
 package xyz.ronella.gradle.plugin.simple.choco.task
 
+import org.gradle.api.provider.ListProperty
 import org.gradle.api.tasks.Input
 
 /**
@@ -8,25 +9,18 @@ import org.gradle.api.tasks.Input
  * @author Ron Webb
  * @since 1.1.0
  */
-class ChocoScriptTask extends ChocoTask {
-
-    protected List<List<String>> packages = []
+abstract class ChocoScriptTask extends ChocoTask {
 
     @Input
-    List<List<String>> getPackages() {
-        return packages
-    }
+    abstract ListProperty<List<String>> getPackages()
 
-    void setPackages(List<List<String>> packages) {
-        this.packages = packages
-    }
-
-    public ChocoScriptTask() {
+    ChocoScriptTask() {
         description = 'Creates a script that contains the packages before executing'
+        packages.convention([])
     }
 
     @Override
-    protected List<List<String>> packagesToScript() {
+    protected ListProperty<List<String>> packagesToScript() {
         return packages
     }
 
@@ -36,11 +30,11 @@ class ChocoScriptTask extends ChocoTask {
     }
 
     @Override
-    public String executeCommand() {
-        if (internalCommand==null && (command==null || command.size()<1)) {
+    String executeCommand() {
+        if (!internalCommand.isPresent() && (!command.isPresent() || command.get().size()<1)) {
             println "The command parameter is required"
         }
-        else if (packages.size()<1) {
+        else if (packages.get().size()<1) {
             println "At least one package is required"
         }
         else {

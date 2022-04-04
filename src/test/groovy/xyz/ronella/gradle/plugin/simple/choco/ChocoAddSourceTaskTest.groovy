@@ -10,22 +10,24 @@ import static org.junit.jupiter.api.Assertions.assertTrue
 
 class ChocoAddSourceTaskTest {
 
-    private Project project;
+    private Project project
 
     @BeforeEach
-    public void initProject() {
+    void initProject() {
         project = ProjectBuilder.builder().build()
         project.pluginManager.apply 'xyz.ronella.simple-choco'
         project.extensions.simple_choco.isNoop = true
     }
 
     @Test
-    public void noParameters() {
+    void noParameters() {
         ChocoAddSourceTask chocoTask = project.tasks.chocoAddSource
         chocoTask.sourceName = "mysource"
         chocoTask.url = "http://www.mylocal.source"
         String command = chocoTask.executeCommand()
         String endsWith = "-Verb runas -argumentlist \"\"\"\"source\"\"\"\",\"\"\"\"add\"\"\"\",\"\"\"\"-s\"\"\"\",\"\"\"\"http://www.mylocal.source\"\"\"\",\"\"\"\"-n=mysource\"\"\"\"\""
+        println "Command: ${command}"
+        println "EndsWith: ${endsWith}"
         assertTrue(command.endsWith(endsWith))
     }
 

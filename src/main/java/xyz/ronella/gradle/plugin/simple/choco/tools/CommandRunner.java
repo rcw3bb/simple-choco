@@ -13,7 +13,7 @@ import java.util.stream.Collectors;
  * @author Ron Webb
  * @since v1.0.0
  */
-public class CommandRunner {
+public final class CommandRunner {
 
     private CommandRunner() {}
 

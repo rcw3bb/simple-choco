@@ -6,11 +6,11 @@ package xyz.ronella.gradle.plugin.simple.choco.task
  * @author Ron Webb
  * @since v1.0.0
  */
-class ChocoUpgradeChocoTask extends ChocoAdminTask {
-    public ChocoUpgradeChocoTask() {
+abstract class ChocoUpgradeChocoTask extends ChocoAdminTask {
+    ChocoUpgradeChocoTask() {
         super()
         description = 'Upgrades the current chocolatey.'
-        internalCommand = 'upgrade'
-        internalArgs += ["chocolatey", "-y"]
+        internalCommand.convention('upgrade')
+        internalArgs.addAll(['chocolatey', '-y'])
     }
 }

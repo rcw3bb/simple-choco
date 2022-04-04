@@ -11,17 +11,17 @@ import static org.junit.jupiter.api.Assertions.assertTrue
 
 class ChocoAdminTaskTest {
 
-    private Project project;
+    private Project project
 
     @BeforeEach
-    public void initProject() {
+    void initProject() {
         project = ProjectBuilder.builder().build()
         project.pluginManager.apply 'xyz.ronella.simple-choco'
         project.extensions.simple_choco.isNoop = true
     }
 
     @Test
-    public void noParameters() {
+    void noParameters() {
         //chocolatey must be installed before running the tests.
         def chocoTask = project.tasks.chocoAdminTask
         String command = chocoTask.executeCommand()
@@ -30,10 +30,9 @@ class ChocoAdminTaskTest {
     }
 
     @Test
-    public void chocoHomeParameter() {
+    void chocoHomeParameter() {
         File chocoHome = Paths.get(".", "src", "test", "resources", "ChocoHome").toFile()
         project.extensions.simple_choco.chocoHome=chocoHome
-        String expectation = Paths.get(chocoHome.absolutePath, ChocoInstaller.BIN_DIR, ChocoInstaller.EXECUTABLE)
         def chocoTask = project.tasks.chocoAdminTask
         String command = chocoTask.executeCommand()
         String endsWith = "-Verb runas -argumentlist \"\"\"\"\"\"\"\"\""
@@ -41,15 +40,14 @@ class ChocoAdminTaskTest {
     }
 
     @Test
-    public void autoInstallDefault() {
-        assertTrue(project.extensions.simple_choco.isAutoInstall)
+    void autoInstallDefault() {
+        assertTrue(project.extensions.simple_choco.isAutoInstall.get())
     }
 
     @Test
-    public void noChocoExecutable() {
+    void noChocoExecutable() {
         File chocoHome = Paths.get(".", "src", "test", "resources", "Choco").toFile()
         project.extensions.simple_choco.chocoHome=chocoHome
-        String expectation = Paths.get(chocoHome.absolutePath, ChocoInstaller.BIN_DIR, ChocoInstaller.EXECUTABLE)
         def chocoTask = project.tasks.chocoAdminTask
         String command = chocoTask.executeCommand()
         assertTrue(command.isEmpty())

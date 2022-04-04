@@ -7,28 +7,27 @@ import org.junit.jupiter.api.Test
 import xyz.ronella.gradle.plugin.simple.choco.task.ChocoScriptTask
 
 import static org.junit.jupiter.api.Assertions.assertNull
-import static org.junit.jupiter.api.Assertions.assertNull
 import static org.junit.jupiter.api.Assertions.assertTrue
 
 class ChocoScriptAdminTaskTest {
-    private Project project;
+    private Project project
 
     @BeforeEach
-    public void initProject() {
+    void initProject() {
         project = ProjectBuilder.builder().build()
         project.pluginManager.apply 'xyz.ronella.simple-choco'
         project.extensions.simple_choco.isNoop = true
     }
 
     @Test
-    public void noParameters() {
+    void noParameters() {
         ChocoScriptTask chocoTask = project.tasks.chocoScriptAdmin
         String command = chocoTask.executeCommand()
         assertNull(command)
     }
 
     @Test
-    public void commandNoPackages() {
+    void commandNoPackages() {
         ChocoScriptTask chocoTask = project.tasks.chocoScriptAdmin
         chocoTask.command = "install"
         String command = chocoTask.executeCommand()
@@ -36,7 +35,7 @@ class ChocoScriptAdminTaskTest {
     }
 
     @Test
-    public void withCommandAndAPackage() {
+    void withCommandAndAPackage() {
         ChocoScriptTask chocoTask = project.tasks.chocoScriptAdmin
         chocoTask.command = "install"
         chocoTask.packages = [["notepadplusplus"]]

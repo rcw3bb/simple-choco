@@ -1,6 +1,8 @@
 package xyz.ronella.gradle.plugin.simple.choco.task
 
 import org.gradle.api.DefaultTask
+import org.gradle.api.provider.ListProperty
+import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.TaskAction
@@ -14,86 +16,75 @@ import xyz.ronella.gradle.plugin.simple.choco.tools.Administration
  * @author Ron Webb
  * @since v1.0.0
  */
-class ChocoTask extends DefaultTask {
+abstract class ChocoTask extends DefaultTask {
 
-    protected String[] internalArgs = []
-    protected String[] internalZArgs = []
-    protected String internalCommand
-    protected boolean isAdminMode
-    protected boolean hasLogging
+    protected final SimpleChocoPluginExtension EXTENSION
 
-    protected String command = ''
-    protected String[] args = []
-    protected String[] zArgs = []
+    protected Property<Boolean> isAdminMode
 
-    @Optional
-    @Input
-    public String getCommand() {
-        return this.command
-    }
+    protected Property<Boolean> hasLogging
 
-    public void setCommand(String command) {
-        this.command = command
-    }
+    protected Property<String> internalCommand
 
-    @Optional
-    @Input
-    public String[] getArgs() {
-        return this.args
-    }
+    protected ListProperty<String> internalArgs
 
-    @Optional
-    @Input
-    public String[] getZArgs() {
-        return this.zArgs
-    }
+    protected ListProperty<String> internalZArgs
 
-    public void setArgs(String[] args) {
-        this.args = args
-    }
+    @Optional @Input
+    abstract Property<String> getCommand()
 
-    public void setZArgs(String[] args) {
-        this.zArgs = args
-    }
+    @Optional @Input
+    abstract ListProperty<String> getArgs()
 
-    public ChocoTask() {
+    @Optional @Input
+    abstract ListProperty<String> getZArgs()
+
+    ChocoTask() {
         group = 'Simple Chocolatey'
         description = 'Executes any valid chocolatey commands.'
+        EXTENSION = project.extensions.simple_choco
+        command.convention('')
+        args.convention([])
+        getZArgs().convention([])
+        var objects = project.objects
+        isAdminMode = objects.property(Boolean.class)
+        hasLogging = objects.property(Boolean.class)
+        internalArgs = objects.listProperty(String.class)
+        internalZArgs = objects.listProperty(String.class)
+        internalCommand = objects.property(String.class)
+
+        isAdminMode.convention(false)
+        hasLogging.convention(false)
     }
 
     protected boolean scriptMode() {
         return false
     }
 
-    protected List<List<String>> packagesToScript() {
-        return new ArrayList<>();
+    protected ListProperty<List<String>> packagesToScript() {
+        return project.objects.<List<String>>listProperty(List<String>.class)
     }
 
     @TaskAction
-    public String executeCommand() {
-        SimpleChocoPluginExtension pluginExt = project.extensions.simple_choco
-
-        if (null!=internalCommand) {
-            command = internalCommand
-        }
+    String executeCommand() {
 
         ChocoExecutor executor = ChocoExecutor.getBuilder()
-            .addAutoInstall(pluginExt.isAutoInstall)
-            .addNoop(pluginExt.isNoop)
-            .addChocoHome(pluginExt.chocoHome)
-            .addAdminMode(isAdminMode)
-            .addCommand(command)
-            .addArgs(internalArgs)
-            .addArgs(args)
-            .addArgs(internalZArgs)
-            .addZArgs(zArgs)
-            .addLogging(hasLogging)
+            .addAutoInstall(EXTENSION.isAutoInstall.get())
+            .addNoop(EXTENSION.isNoop.get())
+            .addChocoHome(EXTENSION.chocoHome.getOrNull())
+            .addAdminMode(isAdminMode.get())
+            .addCommand(internalCommand.isPresent() ? internalCommand.get() : command.get())
+            .addArgs(internalArgs.get().toArray((String[])[]))
+            .addArgs(args.get().toArray((String[])[]))
+            .addArgs(internalZArgs.get().toArray((String[])[]))
+            .addZArgs(getZArgs().get().toArray((String[])[]))
+            .addLogging(hasLogging.get())
             .addRunningOnAdmin(Administration.isElevatedMode())
-            .addForceAdminMode(pluginExt.forceAdminMode)
+            .addForceAdminMode(EXTENSION.forceAdminMode.get())
             .addScriptMode(scriptMode())
-            .addPackages(packagesToScript())
+            .addPackages(packagesToScript().get())
             .addTaskName(name)
-            .addNoScriptDeletion(pluginExt.noScriptDeletion)
+            .addNoScriptDeletion(EXTENSION.noScriptDeletion.get())
             .build()
 
         executor.execute()

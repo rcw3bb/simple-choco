@@ -1,55 +1,65 @@
 package xyz.ronella.gradle.plugin.simple.choco
 
+import org.gradle.api.provider.ListProperty
+import org.gradle.api.provider.Property
+
 /**
  * The simple-choco support implementation.
  *
  * @author Ron Webb
  * @since v1.0.0
  */
-class SimpleChocoPluginExtension {
+abstract class SimpleChocoPluginExtension {
 
     /**
      * Indicates that the choco will be installed when not found.
      */
-    public boolean isAutoInstall = true
+    abstract Property<Boolean> getIsAutoInstall()
 
     /**
      * Force the admin mode behavior.
      *
      * @since 1.1.0
      */
-    public boolean forceAdminMode
+    abstract Property<Boolean> getForceAdminMode()
 
     /**
      * Don't the delete the script generated during script mode.
      *
      * @since 1.1.0
      */
-    public boolean noScriptDeletion
+    abstract Property<Boolean> getNoScriptDeletion()
 
     /**
      * Overrides the default location of choco.
      */
-    public File chocoHome
+    abstract Property<File> getChocoHome()
 
     /**
      * Indicates that no changes will be made.
      */
-    public boolean isNoop
+    abstract Property<Boolean> getIsNoop()
 
     /**
      * Always add all the parameters held during install task.
      */
-    public String[] defaultInstallArgs = []
+    abstract ListProperty<String> getDefaultInstallArgs()
 
     /**
      * Always add all the parameters held during uninstall task.
      */
-    public String[] defaultUninstallArgs = []
+    abstract ListProperty<String> getDefaultUninstallArgs()
 
     /**
      * Always add all the parameters held during upgrade task.
      */
-    public String[] defaultUpgradeArgs = []
+    abstract ListProperty<String> getDefaultUpgradeArgs()
+
+    SimpleChocoPluginExtension() {
+        isAutoInstall.convention(true)
+        forceAdminMode.convention(false)
+        noScriptDeletion.convention(false)
+        isNoop.convention(false)
+    }
 
 }

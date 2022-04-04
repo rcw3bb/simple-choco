@@ -6,11 +6,11 @@ package xyz.ronella.gradle.plugin.simple.choco.task
  * @author Ron Webb
  * @since v1.0.0
  */
-class ChocoSourceListTask extends ChocoTask {
-    public ChocoSourceListTask() {
+abstract class ChocoSourceListTask extends ChocoTask {
+    ChocoSourceListTask() {
         super()
         description = 'Displays the sources that the chocolatey is using.'
-        internalCommand = 'source'
-        internalArgs += "list"
+        internalCommand.convention('source')
+        internalArgs.add('list')
     }
 }

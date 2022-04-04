@@ -1,5 +1,6 @@
 package xyz.ronella.gradle.plugin.simple.choco.task
 
+import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Input
 
 /**
@@ -8,30 +9,22 @@ import org.gradle.api.tasks.Input
  * @author Ron Webb
  * @since v1.0.0
  */
-class ChocoAddSourceTask extends ChocoRemoveSourceTask {
-
-    protected String url
+abstract class ChocoAddSourceTask extends ChocoRemoveSourceTask {
 
     @Input
-    public String getUrl() {
-        return url
-    }
+    abstract Property<String> getUrl()
 
-    public void setUrl(String url) {
-        this.url = url
-    }
-
-    public ChocoAddSourceTask() {
+    ChocoAddSourceTask() {
         super()
         description = 'Adds a source to where chocolatey search for a package.'
-        internalCommand = 'source'
-        internalArgs = ["add"]
+        internalCommand.convention('source')
+        internalArgs.set(['add'])
     }
 
     @Override
-    public String executeCommand() {
-        internalArgs += "-s"
-        internalArgs += url
+    String executeCommand() {
+        internalArgs.add('-s')
+        internalArgs.add(url.get())
         super.executeCommand()
     }
 }

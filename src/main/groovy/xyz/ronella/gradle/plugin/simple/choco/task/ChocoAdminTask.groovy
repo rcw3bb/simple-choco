@@ -6,10 +6,10 @@ package xyz.ronella.gradle.plugin.simple.choco.task
  * @author Ron Webb
  * @since v1.0.0
  */
-class ChocoAdminTask extends ChocoTask {
-    public ChocoAdminTask() {
+abstract class ChocoAdminTask extends ChocoTask {
+    ChocoAdminTask() {
         super()
         description = 'Executes any valid chocolatey commands in administration mode.'
-        isAdminMode = true
+        isAdminMode.convention(true)
     }
 }
