@@ -29,9 +29,7 @@ public final class ChocoExecutor {
     private final String command;
     private final List<String> args;
     private final List<String> zArgs;
-    private boolean hasLogging;
-    private final boolean isRunningOnAdmin;
-    private final boolean forceAdminMode;
+    private final boolean hasLogging;
     private final String taskName;
     private final boolean isScriptMode;
     private final List<List<String>> packages;
@@ -52,9 +50,7 @@ public final class ChocoExecutor {
         args = builder.args;
         zArgs = builder.zArgs;
         hasLogging = builder.hasLogging;
-        isRunningOnAdmin = builder.isRunningOnAdmin;
-        forceAdminMode = builder.forceAdminMode;
-        isAdminMode = (!isRunningOnAdmin || forceAdminMode) && builder.isAdminMode;
+        isAdminMode = (!builder.isRunningOnAdmin || builder.forceAdminMode) && builder.isAdminMode;
         taskName = builder.taskName;
         isScriptMode = builder.isScriptMode;
         packages = builder.packages;

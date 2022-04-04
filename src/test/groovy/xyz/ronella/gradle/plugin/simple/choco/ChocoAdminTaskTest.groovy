@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test
 
 import java.nio.file.Paths
 
+import static org.junit.jupiter.api.Assertions.assertThrows
 import static org.junit.jupiter.api.Assertions.assertTrue
 
 class ChocoAdminTaskTest {
@@ -49,7 +50,8 @@ class ChocoAdminTaskTest {
         File chocoHome = Paths.get(".", "src", "test", "resources", "Choco").toFile()
         project.extensions.simple_choco.chocoHome=chocoHome
         def chocoTask = project.tasks.chocoAdminTask
-        String command = chocoTask.executeCommand()
-        assertTrue(command.isEmpty())
+        assertThrows(ChocoExecutableException.class, () -> {
+            chocoTask.executeCommand()
+        })
     }
 }
