@@ -298,8 +298,13 @@ public final class ChocoExecutor {
             executeLogic.accept(scriptFullPath);
         }
         finally {
-            if (!noScriptDeletion && scriptFile.exists()) {
-                scriptFile.delete();
+            if (scriptFile.exists()) {
+                if (noScriptDeletion) {
+                    System.out.println(String.format("Script file: %s", scriptFile.getAbsolutePath()));
+                }
+                else {
+                    scriptFile.delete();
+                }
             }
         }
     }
