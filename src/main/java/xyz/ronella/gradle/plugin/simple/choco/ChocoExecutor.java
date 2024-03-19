@@ -1,8 +1,8 @@
 package xyz.ronella.gradle.plugin.simple.choco;
 
-import xyz.ronella.gradle.plugin.simple.choco.tools.OSType;
 import xyz.ronella.trivial.handy.CommandRunner;
 import xyz.ronella.trivial.handy.MissingCommandException;
+import xyz.ronella.trivial.handy.OSType;
 
 import java.io.*;
 import java.nio.file.Paths;

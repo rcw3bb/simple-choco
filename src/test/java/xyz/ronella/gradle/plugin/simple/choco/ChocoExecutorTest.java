@@ -1,7 +1,7 @@
 package xyz.ronella.gradle.plugin.simple.choco;
 
 import org.junit.jupiter.api.Test;
-import xyz.ronella.gradle.plugin.simple.choco.tools.OSType;
+import xyz.ronella.trivial.handy.OSType;
 
 import java.util.Arrays;
 import java.util.Collections;
