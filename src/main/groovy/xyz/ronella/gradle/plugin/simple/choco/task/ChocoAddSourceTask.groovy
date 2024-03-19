@@ -9,7 +9,7 @@ import org.gradle.api.tasks.Input
  * @author Ron Webb
  * @since v1.0.0
  */
-abstract class ChocoAddSourceTask extends ChocoRemoveSourceTask {
+abstract class ChocoAddSourceTask extends AbstractChocoSourceTask {
 
     @Input
     abstract Property<String> getUrl()
@@ -17,14 +17,20 @@ abstract class ChocoAddSourceTask extends ChocoRemoveSourceTask {
     ChocoAddSourceTask() {
         super()
         description = 'Adds a source to where chocolatey search for a package.'
-        internalCommand.convention('source')
         internalArgs.set(['add'])
     }
 
     @Override
     String executeCommand() {
-        internalArgs.add('-s')
-        internalArgs.add(url.get())
-        super.executeCommand()
+        def sourceNameToAdd = sourceName.get()
+
+        if (!EXTENSION.isNoop.get() && loadedSourceNames().contains(sourceNameToAdd)) {
+            println("The source [${sourceNameToAdd}] is already existing")
+        }
+        else {
+            internalArgs.add('-s')
+            internalArgs.add(url.get())
+            super.executeCommand()
+        }
     }
 }

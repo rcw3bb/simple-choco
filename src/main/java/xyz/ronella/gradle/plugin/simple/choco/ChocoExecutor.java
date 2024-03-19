@@ -1,7 +1,8 @@
 package xyz.ronella.gradle.plugin.simple.choco;
 
-import xyz.ronella.gradle.plugin.simple.choco.tools.CommandRunner;
 import xyz.ronella.gradle.plugin.simple.choco.tools.OSType;
+import xyz.ronella.trivial.handy.CommandRunner;
+import xyz.ronella.trivial.handy.MissingCommandException;
 
 import java.io.*;
 import java.nio.file.Paths;
@@ -9,8 +10,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 /**
  * The class that assembles the appropriate choco command and execute if possible.
@@ -34,6 +37,7 @@ public final class ChocoExecutor {
     private final boolean isScriptMode;
     private final List<List<String>> packages;
     private final boolean noScriptDeletion;
+    private final boolean showCommand;
 
     /**
      * Creates an instance of ChocoExecutor
@@ -55,6 +59,7 @@ public final class ChocoExecutor {
         isScriptMode = builder.isScriptMode;
         packages = builder.packages;
         noScriptDeletion = builder.noScriptDeletion;
+        showCommand = builder.showCommand;
 
         prepareExecutables();
     }
@@ -71,7 +76,7 @@ public final class ChocoExecutor {
         Optional.ofNullable(System.getenv("CHOCOLATEY_HOME")).ifPresent(___chocoHome ->
                 addExecLogic.accept(() -> Paths.get(___chocoHome,ChocoInstaller.BIN_DIR, ChocoInstaller.EXECUTABLE).toFile()));
 
-        if (executables.size()==0) {
+        if (executables.isEmpty()) {
             executables.add(() -> Paths.get(ChocoInstaller.DEFAULT_INSTALL_LOCATION.toString(), ChocoInstaller.BIN_DIR, ChocoInstaller.EXECUTABLE).toFile());
             Optional.ofNullable(getExecutableAuto()).ifPresent(___chocoHome -> executables.add(() -> ___chocoHome));
         }
@@ -79,19 +84,26 @@ public final class ChocoExecutor {
 
     private File getExecutableAuto() {
         StringBuilder sbFqfn = new StringBuilder();
-        CommandRunner.runCommand((___output, ___error) -> sbFqfn.append(___output),"where", ChocoInstaller.EXECUTABLE);
+        try {
+            CommandRunner.runCommand((___output, ___error) -> {
+                BufferedReader output = new BufferedReader(new InputStreamReader(___output));
+                String outputStr = output.lines().collect(Collectors.joining("\n"));
+                sbFqfn.append(outputStr);
+            },"where", ChocoInstaller.EXECUTABLE);
 
-        String fqfn = sbFqfn.toString();
+            String fqfn = sbFqfn.toString();
 
-        if (fqfn.length() > 0) {
-            fqfn = fqfn.split("\\r\\n")[0]; //Just the first valid entry of where.
-            File fileExec = new File(fqfn);
-            if (fileExec.exists()) {
-                return fileExec;
+            if (!fqfn.isEmpty()) {
+                fqfn = fqfn.split("\\r\\n")[0]; //Just the first valid entry of where.
+                File fileExec = new File(fqfn);
+                if (fileExec.exists()) {
+                    return fileExec;
+                }
             }
+            return null;
+        } catch (MissingCommandException e) {
+            throw new RuntimeException(e);
         }
-
-        return null;
     }
 
     private Optional<File> executable() {
@@ -215,7 +227,9 @@ public final class ChocoExecutor {
 
         String logFile = getLogFile();
 
-        System.out.println(String.join(" ", commandToRun));
+        if (showCommand) {
+            System.out.println(String.join(" ", commandToRun));
+        }
 
         if (!isNoop && hasLogging) {
             allArgs.addAll(generateLoggingArg(logFile));
@@ -236,16 +250,25 @@ public final class ChocoExecutor {
         executable().ifPresent(___executable -> {
             List<String> fullCommand = prepareCommand(___executable);
             sbCommand.append(String.join(" ", fullCommand).trim());
+            try {
+                if (!isNoop) {
+                    CommandRunner.runCommand((___output, ___error)-> {
+                        BufferedReader output = new BufferedReader(new InputStreamReader(___output));
+                        BufferedReader error = new BufferedReader(new InputStreamReader(___error));
+                        String outputStr = output.lines().collect(Collectors.joining("\n"));
+                        String errorStr = error.lines().collect(Collectors.joining("\n"));
 
-            if (!isNoop) {
-                CommandRunner.runCommand((___output, ___error)-> {
-                    if (___error.length()>0) {
-                        System.err.println(___error);
-                    }
-                    else {
-                        System.out.println(___output);
-                    }
-                }, fullCommand.toArray(new String[]{}));
+                        if (!errorStr.isEmpty()) {
+                            System.err.println(___error);
+                        }
+                        else {
+                            System.out.println(outputStr);
+                        }
+
+                    }, fullCommand.toArray(new String[]{}));
+                }
+            } catch (MissingCommandException e) {
+                throw new RuntimeException(e);
             }
         });
         return sbCommand.toString();
@@ -326,14 +349,24 @@ public final class ChocoExecutor {
                         System.out.println(String.format("Scripted on %s", ___scriptFullPath));
                     }
                     else {
-                        CommandRunner.runCommand((___output, ___error)-> {
-                            if (___error.length()>0) {
-                                System.err.println(___error);
-                            }
-                            else {
-                                System.out.println(___output);
-                            }
-                        }, fullCommand.toArray(new String[]{}));
+                        try {
+                            CommandRunner.runCommand((___output, ___error)-> {
+                                BufferedReader output = new BufferedReader(new InputStreamReader(___output));
+                                BufferedReader error = new BufferedReader(new InputStreamReader(___error));
+                                String outputStr = output.lines().collect(Collectors.joining("\n"));
+                                String errorStr = error.lines().collect(Collectors.joining("\n"));
+
+                                if (!errorStr.isEmpty()) {
+                                    System.err.println(errorStr);
+                                }
+                                else {
+                                    System.out.println(outputStr);
+                                }
+
+                            }, fullCommand.toArray(new String[]{}));
+                        } catch (MissingCommandException e) {
+                            throw new RuntimeException(e);
+                        }
                     }
                 });
             } catch (ChocoScriptException chocoScriptException) {
@@ -357,6 +390,23 @@ public final class ChocoExecutor {
         }
     }
 
+    public String executeSingleCommand(BiConsumer<InputStream, InputStream> logic) {
+        StringBuilder sbCommand = new StringBuilder();
+        executable().ifPresent(___executable -> {
+            List<String> fullCommand = prepareCommand(___executable);
+            sbCommand.append(String.join(" ", fullCommand).trim());
+
+            try {
+                if (!isNoop) {
+                    CommandRunner.runCommand(logic, fullCommand.toArray(new String[]{}));
+                }
+            } catch (MissingCommandException e) {
+                throw new RuntimeException(e);
+            }
+        });
+        return sbCommand.toString();
+    }
+
     /**
      * Creates an instance of ChocoExecutorBuilder.
      *
@@ -373,6 +423,7 @@ public final class ChocoExecutor {
      * @since v1.0.0
      */
     public static class ChocoExecutorBuilder {
+        private boolean showCommand;
         private OSType osType;
         private boolean isAutoInstall;
         private File chocoHome;
@@ -392,6 +443,7 @@ public final class ChocoExecutor {
         private ChocoExecutorBuilder() {
             args = new ArrayList<>();
             zArgs = new ArrayList<>();
+            showCommand = true;
         }
 
         /**
@@ -577,6 +629,17 @@ public final class ChocoExecutor {
          */
         public ChocoExecutorBuilder addNoScriptDeletion(boolean noScriptDeletion) {
             this.noScriptDeletion = noScriptDeletion;
+            return this;
+        }
+
+        /**
+         * Suppress displaying the command to execute.
+         * @return An instance of the builder.
+         *
+         * @since 2.1.0
+         */
+        public ChocoExecutorBuilder dontShowCommand() {
+            this.showCommand = false;
             return this;
         }
 
