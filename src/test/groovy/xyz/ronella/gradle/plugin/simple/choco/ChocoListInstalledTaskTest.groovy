@@ -22,7 +22,7 @@ class ChocoListInstalledTaskTest {
     void noParameters() {
         def chocoTask = project.tasks.chocoListInstalled
         String command = chocoTask.executeCommand()
-        String endsWith = "choco.exe list --local-only"
+        String endsWith = "choco.exe list"
         assertTrue(command.endsWith(endsWith))
     }
 }

@@ -12,6 +12,5 @@ abstract class ChocoListInstalledTask extends ChocoTask {
         super()
         description = 'Lists locally installed packages by chocolatey.'
         internalCommand.convention('list')
-        internalArgs.add('--local-only')
     }
 }
