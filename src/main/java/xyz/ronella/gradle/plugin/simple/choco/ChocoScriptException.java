@@ -8,6 +8,11 @@ package xyz.ronella.gradle.plugin.simple.choco;
  */
 public class ChocoScriptException extends ChocoException {
 
+    /**
+     * Constructor that accepts a message.
+     *
+     * @param message The detail message.
+     */
     public ChocoScriptException(String message) {
         super(message);
     }

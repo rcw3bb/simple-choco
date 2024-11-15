@@ -1,6 +1,7 @@
 package xyz.ronella.gradle.plugin.simple.choco;
 
-import xyz.ronella.gradle.plugin.simple.choco.tools.CommandRunner;
+import xyz.ronella.trivial.handy.CommandProcessor;
+import xyz.ronella.trivial.handy.impl.CommandArray;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -34,12 +35,17 @@ public final class ChocoInstaller {
 
     private static Boolean CHOCO_INSTALLATION_FAILED = false;
 
+    /**
+     * Checks if the Chocolatey installation has failed.
+     *
+     * @return true if the installation failed, false otherwise.
+     */
     public static Boolean hasInstallationFailed() {
         return CHOCO_INSTALLATION_FAILED;
     }
 
     /**
-     * The command the and parameters that will install the chocolatey application.
+     * The command and parameters that will install the chocolatey application.
      *
      * @return A list that contains the installation command.
      */
@@ -69,12 +75,13 @@ public final class ChocoInstaller {
         System.out.println("Installing Chocolatey");
 
         ChocoInstaller chocoInstaller = new ChocoInstaller();
-        String[] command = chocoInstaller.getInstallCommand().toArray(new String[] {});
+        var command = chocoInstaller.getInstallCommand();
 
-        CommandRunner.runCommand((___output, ___error) -> {
-            if (___error.length() > 0) {
+        CommandProcessor.process(CommandProcessor.ProcessOutputHandler.captureOutputs((___output, ___error) -> {
+            if (!___error.isEmpty()) {
                 System.err.println("Error: " + ___error);
             }
-        }, command);
+        }), CommandArray.wrap(String.join(" ", command)));
+
     }
 }

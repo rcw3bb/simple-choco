@@ -8,6 +8,7 @@ plugins {
     id 'java'
     id 'groovy'
     id 'java-gradle-plugin'
+    id 'jacoco'
     alias(libs.plugins.gradle.plugin.publish)
     alias(libs.plugins.shadow)
     alias(libs.plugins.snyk)
@@ -85,6 +86,7 @@ dependencies {
 
 test {
     useJUnitPlatform()
+    finalizedBy(jacocoTestReport)
     finalizedBy('snyk-test')
 }
 

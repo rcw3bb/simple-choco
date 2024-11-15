@@ -9,10 +9,18 @@ import org.gradle.api.GradleException;
  * @since v1.0.0
  */
 public class ChocoException extends GradleException {
+
+    /**
+     * Constructor
+     */
     public ChocoException() {
         super();
     }
 
+    /**
+     * Constructor
+     * @param message The exception message.
+     */
     public ChocoException(String message) {
         super(message);
     }

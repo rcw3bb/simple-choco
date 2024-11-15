@@ -8,6 +8,9 @@ package xyz.ronella.gradle.plugin.simple.choco;
  */
 public class ChocoExecutableException extends ChocoException {
 
+    /**
+     * Constructor
+     */
     public ChocoExecutableException() {
         super("Chocolatey executable not found.");
     }

@@ -1,8 +1,8 @@
 package xyz.ronella.gradle.plugin.simple.choco;
 
-import xyz.ronella.trivial.handy.CommandRunner;
-import xyz.ronella.trivial.handy.MissingCommandException;
+import xyz.ronella.trivial.handy.CommandProcessor;
 import xyz.ronella.trivial.handy.OSType;
+import xyz.ronella.trivial.handy.impl.CommandArray;
 
 import java.io.*;
 import java.nio.file.Paths;
@@ -84,26 +84,20 @@ public final class ChocoExecutor {
 
     private File getExecutableAuto() {
         StringBuilder sbFqfn = new StringBuilder();
-        try {
-            CommandRunner.runCommand((___output, ___error) -> {
-                BufferedReader output = new BufferedReader(new InputStreamReader(___output));
-                String outputStr = output.lines().collect(Collectors.joining("\n"));
-                sbFqfn.append(outputStr);
-            },"where", ChocoInstaller.EXECUTABLE);
+        CommandProcessor.process(CommandProcessor.ProcessOutputHandler.captureOutputs((___output, ___error) ->
+                        sbFqfn.append(___output)),
+                CommandArray.wrap(String.join(" " , List.of("where", ChocoInstaller.EXECUTABLE))));
 
-            String fqfn = sbFqfn.toString();
+        String fqfn = sbFqfn.toString();
 
-            if (!fqfn.isEmpty()) {
-                fqfn = fqfn.split("\\r\\n")[0]; //Just the first valid entry of where.
-                File fileExec = new File(fqfn);
-                if (fileExec.exists()) {
-                    return fileExec;
-                }
+        if (!fqfn.isEmpty()) {
+            fqfn = fqfn.split("\\r\\n")[0]; //Just the first valid entry of where.
+            File fileExec = new File(fqfn);
+            if (fileExec.exists()) {
+                return fileExec;
             }
-            return null;
-        } catch (MissingCommandException e) {
-            throw new RuntimeException(e);
         }
+        return null;
     }
 
     private Optional<File> executable() {
@@ -245,30 +239,31 @@ public final class ChocoExecutor {
         return fullCommand;
     }
 
+    private void executeCommand(final List<String> command) {
+        final var commandArray = CommandArray.wrap(String.join(" ", command));
+        CommandProcessor.process(CommandProcessor.ProcessOutputHandler.captureStreams(
+                (___output, ___error) -> {
+                    BufferedReader output = new BufferedReader(new InputStreamReader(___output));
+                    BufferedReader error = new BufferedReader(new InputStreamReader(___error));
+                    String outputStr = output.lines().collect(Collectors.joining("\n"));
+                    String errorStr = error.lines().collect(Collectors.joining("\n"));
+
+                    if (!errorStr.isEmpty()) {
+                        System.err.println(errorStr);
+                    }
+                    else {
+                        System.out.println(outputStr);
+                    }
+                }), commandArray);
+    }
+
     private String executeSingleCommand() {
         StringBuilder sbCommand = new StringBuilder();
         executable().ifPresent(___executable -> {
             List<String> fullCommand = prepareCommand(___executable);
             sbCommand.append(String.join(" ", fullCommand).trim());
-            try {
-                if (!isNoop) {
-                    CommandRunner.runCommand((___output, ___error)-> {
-                        BufferedReader output = new BufferedReader(new InputStreamReader(___output));
-                        BufferedReader error = new BufferedReader(new InputStreamReader(___error));
-                        String outputStr = output.lines().collect(Collectors.joining("\n"));
-                        String errorStr = error.lines().collect(Collectors.joining("\n"));
-
-                        if (!errorStr.isEmpty()) {
-                            System.err.println(___error);
-                        }
-                        else {
-                            System.out.println(outputStr);
-                        }
-
-                    }, fullCommand.toArray(new String[]{}));
-                }
-            } catch (MissingCommandException e) {
-                throw new RuntimeException(e);
+            if (!isNoop) {
+                executeCommand(fullCommand);
             }
         });
         return sbCommand.toString();
@@ -291,6 +286,7 @@ public final class ChocoExecutor {
         else {
             fullCommand.add(singleQuote(scriptFullPath));
         }
+
         return fullCommand;
     }
 
@@ -349,25 +345,9 @@ public final class ChocoExecutor {
                         System.out.println(String.format("Scripted on %s", ___scriptFullPath));
                     }
                     else {
-                        try {
-                            CommandRunner.runCommand((___output, ___error)-> {
-                                BufferedReader output = new BufferedReader(new InputStreamReader(___output));
-                                BufferedReader error = new BufferedReader(new InputStreamReader(___error));
-                                String outputStr = output.lines().collect(Collectors.joining("\n"));
-                                String errorStr = error.lines().collect(Collectors.joining("\n"));
-
-                                if (!errorStr.isEmpty()) {
-                                    System.err.println(errorStr);
-                                }
-                                else {
-                                    System.out.println(outputStr);
-                                }
-
-                            }, fullCommand.toArray(new String[]{}));
-                        } catch (MissingCommandException e) {
-                            throw new RuntimeException(e);
-                        }
+                        executeCommand(fullCommand);
                     }
+
                 });
             } catch (ChocoScriptException chocoScriptException) {
                 chocoScriptException.printStackTrace(System.err);
@@ -390,18 +370,22 @@ public final class ChocoExecutor {
         }
     }
 
+    /**
+     * Executes a single choco command with custom logic for handling the command's output and error streams.
+     *
+     * @param logic A BiConsumer that processes the InputStream for the command's output and error streams.
+     * @return The command that was executed as a String.
+     * @throws RuntimeException if the command cannot be executed due to a MissingCommandException.
+     */
     public String executeSingleCommand(BiConsumer<InputStream, InputStream> logic) {
         StringBuilder sbCommand = new StringBuilder();
         executable().ifPresent(___executable -> {
             List<String> fullCommand = prepareCommand(___executable);
             sbCommand.append(String.join(" ", fullCommand).trim());
 
-            try {
-                if (!isNoop) {
-                    CommandRunner.runCommand(logic, fullCommand.toArray(new String[]{}));
-                }
-            } catch (MissingCommandException e) {
-                throw new RuntimeException(e);
+            if (!isNoop) {
+                final var commandArray = CommandArray.wrap(String.join(" ", fullCommand));
+                CommandProcessor.process(CommandProcessor.ProcessOutputHandler.captureStreams(logic), commandArray);
             }
         });
         return sbCommand.toString();
