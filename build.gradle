@@ -58,6 +58,14 @@ java {
     targetCompatibility = JavaVersion.VERSION_17
 }
 
+snyk {
+    arguments = '--all-sub-projects'
+    severity = 'low'
+    api = "${snykToken}"
+    autoDownload = true
+    autoUpdate = true
+}
+
 repositories {
     mavenCentral()
 }
@@ -77,6 +85,7 @@ dependencies {
 
 test {
     useJUnitPlatform()
+    finalizedBy('snyk-test')
 }
 
 jar {
