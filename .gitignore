@@ -5,3 +5,4 @@ build/
 obj/
 .dotnet/
 DummyTest.*
+snyk.exe

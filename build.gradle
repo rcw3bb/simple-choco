@@ -1,89 +1,85 @@
+buildscript {
+    configurations.classpath {
+        resolutionStrategy.activateDependencyLocking()
+    }
+}
+
 plugins {
     id 'java'
     id 'groovy'
     id 'java-gradle-plugin'
-    id 'com.gradle.plugin-publish' version '0.11.0'
-    id 'maven-publish'
+    alias(libs.plugins.gradle.plugin.publish)
+    alias(libs.plugins.shadow)
+    alias(libs.plugins.snyk)
 }
 
 ext {
     publishingPath = version.toString().contains("SNAPSHOT") ? 'snapshots' : 'internal'
+    pluginDescription = 'The plugin that allows you access to choco commands inside gradle as task'
 }
 
-pluginBundle {
-    website = 'https://github.com/rcw3bb/simple-choco'
-    vcsUrl = 'https://github.com/rcw3bb/simple-choco'
-    tags = ['ronella', 'simple-choco', 'choco', 'chocolatey', 'packages', 'install'
-    	, 'package manager', 'package', 'automation', 'software management', 'management'
-    	, 'software', 'software automation']
+configurations {
+    plugin
+    implementation.extendsFrom(plugin)
+
+    [apiElements, runtimeElements].each {
+        it.outgoing.artifacts.removeIf { it.buildDependencies.getDependencies(null).contains(jar) }
+        it.outgoing.artifact(shadowJar)
+    }
+
+}
+
+shadowJar {
+    configurations = [project.configurations.plugin]
+    archiveClassifier.set("")
+    relocate 'xyz.ronella.trivial', "${project.group}.shadow.trivial"
+    minimize()
 }
 
 gradlePlugin {
+    website = 'https://github.com/rcw3bb/simple-choco'
+    vcsUrl = 'https://github.com/rcw3bb/simple-choco'
+    description = pluginDescription
     plugins {
         simpleChoco {
             id = 'xyz.ronella.simple-choco'
             displayName = 'Simple Choco Plugin'
-            description = 'The plugin that allows you access to choco commands inside gradle as task'
+            description = pluginDescription
             implementationClass = 'xyz.ronella.gradle.plugin.simple.choco.SimpleChocoPlugin'
+            tags = ['ronella', 'simple-choco', 'choco', 'chocolatey', 'packages', 'install'
+                    , 'package manager', 'package', 'automation', 'software management', 'management'
+                    , 'software', 'software automation']
         }
     }
 }
 
-sourceCompatibility = 1.11
+java {
+    sourceCompatibility = JavaVersion.VERSION_17
+    targetCompatibility = JavaVersion.VERSION_17
+}
 
 repositories {
-    if (Boolean.valueOf(USE_PRIVATE_REPO)) {
-        println "Using Private Repository"
-
-        maven {
-            url 'https://repo.ronella.xyz/artifactory/java-central'
-            credentials {
-                username "${artifactoryUsername}"
-                password "${artifactoryPassword}"
-            }
-            mavenContent {
-                releasesOnly()
-            }
-        }
-        maven {
-            url 'https://repo.ronella.xyz/archiva/repository/snapshots/'
-            credentials {
-                username "${archivaUsername}"
-                password "${archivaPassword}"
-            }
-            mavenContent {
-                snapshotsOnly()
-            }
-        }
-    }
-    else {
-        println "Using mavenCentral Repository"
-        mavenCentral()
-    }
+    mavenCentral()
 }
 
-publishing {
-    publications {
-        repositories.maven {
-            url "https://repo.ronella.xyz/archiva/repository/${publishingPath}/"
-            credentials {
-                username "${archivaUsername}"
-                password "${archivaPassword}"
-            }
-        }
-    }
+dependencyLocking {
+    lockAllConfigurations()
 }
 
 dependencies {
     implementation gradleApi()
     implementation localGroovy()
 
-    testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter-api', version: '5.5.2'
-    testRuntimeOnly group: 'org.junit.jupiter', name: 'junit-jupiter-engine', version: '5.5.2'
+    plugin libs.trivial.chunk
 
-    testImplementation group: 'org.mockito', name: 'mockito-core', version: '3.1.0'
+    testImplementation testLibs.bundles.unit.test
 }
 
 test {
     useJUnitPlatform()
+}
+
+jar {
+    enabled = false
+    dependsOn shadowJar
 }
