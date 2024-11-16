@@ -1,5 +1,17 @@
 # Changelog
 
+## 2.1.0 : 2024-11-16
+
+### New
+
+* Usage of **version catalog** for dependency management.
+* The **source compatibility** is now **Java 21**.
+* **Adding package source** only works if the target source is **not yet registered**.
+* **Removing package source** only works if the target source is **already registered**.
+* Make the **choco download URL configurable**.
+* All the **default arguments** *(i.e. defaultInstallArgs, defaultUpgradeArgs and defaultUninstallArgs)* in extensions are now defaulted with **-y**.
+* The **forceAdminMode** in extensions is defaulted to **true**.
+
 ## 2.0.0 : 2022-04-05
 
 ### New

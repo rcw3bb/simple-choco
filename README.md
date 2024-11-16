@@ -4,7 +4,7 @@ The plugin that allows you access to chocolatey commands inside gradle as task.
 
 # Pre-requisite
 
-* Java 11
+* Java 21
 * Windows 
 
 ## Plugging in the simple-choco
@@ -13,7 +13,7 @@ In your **build.gradle** file add the following plugin:
 
 ```groovy
 plugins {
-    id "xyz.ronella.simple-choco" version "2.0.0"
+    id "xyz.ronella.simple-choco" version "2.1.0"
 }
 ```
 
@@ -55,10 +55,11 @@ The first location that the plugin will try to look for the **chocolatey executa
 | Property | Description | Type | Default |
 |-----|------|------|-----|
 | simple_choco.chocoHome | Indicates the chocolatey installation directory when not automatically detected and **CHOCOLATEY_HOME was not set**. | File | null |
-| simple_choco.defaultInstallArgs | Holds the arguments that will always be present on any **chocoInstall** tasks. | String[] | empty |
-| simple_choco.defaultUninstallArgs | Holds the arguments that will always be present on any **chocoUninstall** tasks. | String[] | empty |
-| simple_choco.defaultUpgradeArgs | Holds the arguments that will always be present on any **chocoUpgrade** tasks. | String[] | empty |
-| simple_choco.forceAdminMode | If the autodetection of administration mode failed set this to true. | boolean | false |
+| simple_choco.chocoDownloadURL | The address of the choco download URL | String | https://chocolatey.org/install.ps1 |
+| simple_choco.defaultInstallArgs | Holds the arguments that will always be present on any **chocoInstall** tasks. | String[] | ["-y"]                             |
+| simple_choco.defaultUninstallArgs | Holds the arguments that will always be present on any **chocoUninstall** tasks. | String[] | ["-y"] |
+| simple_choco.defaultUpgradeArgs | Holds the arguments that will always be present on any **chocoUpgrade** tasks. | String[] | ["-y"] |
+| simple_choco.forceAdminMode | If the autodetection of administration mode failed set this to true. | boolean | true |
 | simple_choco.isAutoInstall | On the first use of any choco tasks and the choco executable was not found. The plugin will try to **install the chocolatey application**. If this process failed, try to install the chocolatey application manually and set the CHOCOLATEY_HOME environment variable accordingly. | boolean | true |
 | simple_choco.noScriptDeletion | **Shows the script** that was executed at the end of running the script mode tasks *(e.g. chocoScriptInstall)*. | boolean | false |
 
