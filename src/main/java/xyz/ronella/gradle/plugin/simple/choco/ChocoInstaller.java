@@ -67,6 +67,8 @@ public final class ChocoInstaller {
     /**
      * The method that will actually install the chocolatey application.
      *
+     * @param downloadURL The URL of the chocolatey download script.
+     *
      * @throws ChocoInstallException An instance thrown if the installation failed.
      */
     public static void install(final String downloadURL) throws ChocoInstallException {
