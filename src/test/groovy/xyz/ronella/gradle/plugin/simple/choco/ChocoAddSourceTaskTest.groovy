@@ -20,14 +20,23 @@ class ChocoAddSourceTaskTest {
     }
 
     @Test
-    void noParameters() {
+    void withRequiredParameters() {
         ChocoAddSourceTask chocoTask = project.tasks.chocoAddSource
         chocoTask.sourceName = "mysource"
         chocoTask.url = "http://www.mylocal.source"
         String command = chocoTask.executeCommand()
         String endsWith = "-Verb runas -argumentlist \"\"\"\"source\"\"\"\",\"\"\"\"add\"\"\"\",\"\"\"\"-s\"\"\"\",\"\"\"\"http://www.mylocal.source\"\"\"\",\"\"\"\"-n=mysource\"\"\"\"\""
-        println "Command: ${command}"
-        println "EndsWith: ${endsWith}"
+        assertTrue(command.endsWith(endsWith))
+    }
+
+    @Test
+    void withPriority() {
+        ChocoAddSourceTask chocoTask = project.tasks.chocoAddSource
+        chocoTask.sourceName = "mysource"
+        chocoTask.url = "http://www.mylocal.source"
+        chocoTask.priority = 1
+        String command = chocoTask.executeCommand()
+        String endsWith = "-Verb runas -argumentlist \"\"\"\"source\"\"\"\",\"\"\"\"add\"\"\"\",\"\"\"\"-s\"\"\"\",\"\"\"\"http://www.mylocal.source\"\"\"\",\"\"\"\"--priority\"\"\"\",\"\"\"\"1\"\"\"\",\"\"\"\"-n=mysource\"\"\"\"\""
         assertTrue(command.endsWith(endsWith))
     }
 

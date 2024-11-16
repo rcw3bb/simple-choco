@@ -2,6 +2,7 @@ package xyz.ronella.gradle.plugin.simple.choco.task
 
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.Optional
 
 /**
  * A convenience task for adding a choco source.
@@ -13,6 +14,9 @@ abstract class ChocoAddSourceTask extends AbstractChocoSourceTask {
 
     @Input
     abstract Property<String> getUrl()
+
+    @Optional @Input
+    abstract Property<Integer> getPriority()
 
     ChocoAddSourceTask() {
         super()
@@ -30,6 +34,12 @@ abstract class ChocoAddSourceTask extends AbstractChocoSourceTask {
         else {
             internalArgs.add('-s')
             internalArgs.add(url.get())
+
+            if (priority.isPresent()) {
+                internalArgs.add('--priority')
+                internalArgs.add(priority.get().toString())
+            }
+
             super.executeCommand()
         }
     }
