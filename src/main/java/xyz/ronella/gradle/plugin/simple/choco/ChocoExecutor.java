@@ -86,7 +86,7 @@ public final class ChocoExecutor {
         StringBuilder sbFqfn = new StringBuilder();
         CommandProcessor.process(CommandProcessor.ProcessOutputHandler.captureOutputs((___output, ___error) ->
                         sbFqfn.append(___output)),
-                CommandArray.wrap(String.join(" " , List.of("where", ChocoInstaller.EXECUTABLE))));
+                CommandArray.wrap(List.of("where", ChocoInstaller.EXECUTABLE)));
 
         String fqfn = sbFqfn.toString();
 
@@ -240,7 +240,6 @@ public final class ChocoExecutor {
     }
 
     private void executeCommand(final List<String> command) {
-        final var commandArray = CommandArray.wrap(String.join(" ", command));
         CommandProcessor.process(CommandProcessor.ProcessOutputHandler.captureStreams(
                 (___output, ___error) -> {
                     BufferedReader output = new BufferedReader(new InputStreamReader(___output));
@@ -254,7 +253,7 @@ public final class ChocoExecutor {
                     else {
                         System.out.println(outputStr);
                     }
-                }), commandArray);
+                }), CommandArray.wrap(command));
     }
 
     private String executeSingleCommand() {
@@ -384,7 +383,7 @@ public final class ChocoExecutor {
             sbCommand.append(String.join(" ", fullCommand).trim());
 
             if (!isNoop) {
-                final var commandArray = CommandArray.wrap(String.join(" ", fullCommand));
+                final var commandArray = CommandArray.wrap(fullCommand);
                 CommandProcessor.process(CommandProcessor.ProcessOutputHandler.captureStreams(logic), commandArray);
             }
         });

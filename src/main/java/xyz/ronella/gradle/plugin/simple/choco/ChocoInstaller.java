@@ -19,7 +19,7 @@ public final class ChocoInstaller {
     private ChocoInstaller() {}
 
     /**
-     * The choco executor file nanme.
+     * The choco executor filename.
      */
     public static final String EXECUTABLE = "choco.exe";
 
@@ -32,17 +32,6 @@ public final class ChocoInstaller {
      * The default installation location of chocolatey application.
      */
     public static final Path DEFAULT_INSTALL_LOCATION = Paths.get(System.getenv("ProgramData"), "chocolatey");
-
-    private static Boolean CHOCO_INSTALLATION_FAILED = false;
-
-    /**
-     * Checks if the Chocolatey installation has failed.
-     *
-     * @return true if the installation failed, false otherwise.
-     */
-    public static Boolean hasInstallationFailed() {
-        return CHOCO_INSTALLATION_FAILED;
-    }
 
     /**
      * The command and parameters that will install the chocolatey application.
@@ -81,7 +70,7 @@ public final class ChocoInstaller {
             if (!___error.isEmpty()) {
                 System.err.println("Error: " + ___error);
             }
-        }), CommandArray.wrap(String.join(" ", command)));
+        }), CommandArray.wrap(command));
 
     }
 }
