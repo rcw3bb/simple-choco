@@ -43,4 +43,9 @@ class ChocoTaskTest {
         assertTrue(project.extensions.simple_choco.isAutoInstall.get())
     }
 
+    @Test
+    void autoChocoDownloadURLDefault() {
+        assertEquals(project.extensions.simple_choco.chocoDownloadURL.get(), "https://chocolatey.org/install.ps1")
+    }
+
 }

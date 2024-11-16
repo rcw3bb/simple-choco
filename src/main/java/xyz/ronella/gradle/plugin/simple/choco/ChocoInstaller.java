@@ -38,10 +38,19 @@ public final class ChocoInstaller {
      *
      * @return A list that contains the installation command.
      */
-    public List<String> getInstallCommand() {
+    public List<String> getInstallCommand(String downloadURL) {
         final String POWER_SHELL = "PowerShell.Exe";
 
-        String installCommand = "\"Start-Process powershell -Wait -Verb runas -argumentlist \"\"\"\"-NoProfile\"\"\"\",\"\"\"\"-InputFormat\"\"\"\",\"\"\"\"None\"\"\"\",\"\"\"\"-ExecutionPolicy\"\"\"\",\"\"\"\"Bypass\"\"\"\",\"\"\"\"-Command\"\"\"\",\"\"\"\"[System.Net.ServicePointManager]::SecurityProtocol = 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))\"\"\"\"\"";
+        String installCommand = String.format("\"Start-Process powershell -Wait -Verb runas -argumentlist " +
+                "\"\"\"\"-NoProfile\"\"\"\"," +
+                "\"\"\"\"-InputFormat\"\"\"\"," +
+                "\"\"\"\"None\"\"\"\"," +
+                "\"\"\"\"-ExecutionPolicy\"\"\"\"," +
+                "\"\"\"\"Bypass\"\"\"\"," +
+                "\"\"\"\"-Command\"\"\"\"," +
+                "\"\"\"\"[System.Net.ServicePointManager]::SecurityProtocol = 3072; " +
+                "iex ((New-Object System.Net.WebClient).DownloadString('%s'))\"\"\"\"\"", downloadURL);
+
         List<String> command = new ArrayList<>();
         command.add(POWER_SHELL);
         command.add("-NoProfile");
@@ -60,11 +69,11 @@ public final class ChocoInstaller {
      *
      * @throws ChocoInstallException An instance thrown if the installation failed.
      */
-    public static void install() throws ChocoInstallException {
+    public static void install(final String downloadURL) throws ChocoInstallException {
         System.out.println("Installing Chocolatey");
 
         ChocoInstaller chocoInstaller = new ChocoInstaller();
-        var command = chocoInstaller.getInstallCommand();
+        var command = chocoInstaller.getInstallCommand(downloadURL);
 
         CommandProcessor.process(CommandProcessor.ProcessOutputHandler.captureOutputs((___output, ___error) -> {
             if (!___error.isEmpty()) {

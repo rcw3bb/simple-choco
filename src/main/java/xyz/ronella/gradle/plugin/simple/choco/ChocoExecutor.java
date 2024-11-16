@@ -38,6 +38,7 @@ public final class ChocoExecutor {
     private final List<List<String>> packages;
     private final boolean noScriptDeletion;
     private final boolean showCommand;
+    private final String chocoDownloadURL;
 
     /**
      * Creates an instance of ChocoExecutor
@@ -60,6 +61,7 @@ public final class ChocoExecutor {
         packages = builder.packages;
         noScriptDeletion = builder.noScriptDeletion;
         showCommand = builder.showCommand;
+        chocoDownloadURL = builder.chocoDownloadURL;
 
         prepareExecutables();
     }
@@ -113,7 +115,10 @@ public final class ChocoExecutor {
                         if (!isNoop) {
                             File installLocation = ChocoInstaller.DEFAULT_INSTALL_LOCATION.toFile();
                             if (!installLocation.exists()) {
-                                ChocoInstaller.install();
+
+                                System.out.printf("Downloading from %s%n", chocoDownloadURL);
+
+                                ChocoInstaller.install(chocoDownloadURL);
                                 if (installLocation.exists()) {
                                     return executable();
                                 }
@@ -124,7 +129,9 @@ public final class ChocoExecutor {
                         }
                     }
                     else {
-                        String missingChocoExecutable = String.format("Cannot find %s and automatic installation is disabled, chocoHome property was set or CHOCOLATEY_HOME environment variable exists.", ChocoInstaller.EXECUTABLE);
+                        String missingChocoExecutable = String.format("Cannot find %s and automatic installation is " +
+                                "disabled, ensure that chocoHome property was set or CHOCOLATEY_HOME environment " +
+                                "variable exists.", ChocoInstaller.EXECUTABLE);
                         System.err.println(missingChocoExecutable);
                     }
                 } catch (ChocoInstallException cie) {
@@ -422,6 +429,7 @@ public final class ChocoExecutor {
         private boolean isScriptMode;
         private List<List<String>> packages;
         private boolean noScriptDeletion;
+        private String chocoDownloadURL;
 
         private ChocoExecutorBuilder() {
             args = new ArrayList<>();
@@ -623,6 +631,18 @@ public final class ChocoExecutor {
          */
         public ChocoExecutorBuilder dontShowCommand() {
             this.showCommand = false;
+            return this;
+        }
+
+        /**
+         * Adds the choco download URL.
+         * @param chocoDownloadURL The URL of the choco download.
+         *
+         * @return An instance of the builder.
+         * @since 2.1.0
+         */
+        public ChocoExecutorBuilder addChocoDownloadURL(String chocoDownloadURL) {
+            this.chocoDownloadURL = chocoDownloadURL;
             return this;
         }
 

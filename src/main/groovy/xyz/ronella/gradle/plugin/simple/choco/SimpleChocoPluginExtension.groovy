@@ -55,11 +55,17 @@ abstract class SimpleChocoPluginExtension {
      */
     abstract ListProperty<String> getDefaultUpgradeArgs()
 
+    /**
+     * The URL where to download of the chocolatey binary.
+     */
+    abstract Property<String> getChocoDownloadURL()
+
     SimpleChocoPluginExtension() {
         isAutoInstall.convention(true)
         forceAdminMode.convention(false)
         noScriptDeletion.convention(false)
         isNoop.convention(false)
+        chocoDownloadURL.convention('https://chocolatey.org/install.ps1')
     }
 
 }
