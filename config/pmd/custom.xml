@@ -1,0 +1,65 @@
+<ruleset name="Custom Rules"
+         xmlns="http://pmd.sourceforge.net/ruleset/2.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://pmd.sourceforge.net/ruleset/2.0.0 https://pmd.sourceforge.io/ruleset_2_0_0.xsd">
+
+    <description>
+        Custom Rules
+    </description>
+
+    <exclude-pattern>.*/ChocoExecutor\.java</exclude-pattern>
+    <exclude-pattern>.*/ChocoInstaller\.java</exclude-pattern>
+
+    <rule ref="category/java/bestpractices.xml" />
+    <rule ref="category/java/codestyle.xml" >
+        <exclude name="FormalParameterNamingConventions"/>
+        <exclude name="LinguisticNaming"/>
+        <exclude name="GenericsNaming"/>
+        <exclude name="UnnecessaryConstructor"/>
+        <exclude name="ShortClassName"/>
+        <exclude name="UseExplicitTypes"/>
+    </rule>
+    <rule ref="category/java/design.xml" >
+        <exclude name="LawOfDemeter"/>
+        <exclude name="LoosePackageCoupling"/>
+        <exclude name="DataClass"/>
+    </rule>
+    <rule ref="category/java/design.xml/TooManyMethods">
+        <properties>
+            <property name="maxmethods" value="20" />
+        </properties>
+    </rule>
+    <rule ref="category/java/design.xml/NcssCount">
+        <properties>
+            <property name="methodReportLevel" value="30" />
+            <property name="classReportLevel" value="500" />
+        </properties>
+    </rule>
+    <rule ref="category/java/design.xml/ExcessiveParameterList">
+        <properties>
+            <property name="minimum" value="5" />
+        </properties>
+    </rule>
+    <rule ref="category/java/documentation.xml">
+        <exclude name="CommentSize"/>
+    </rule>
+    <rule ref="category/java/documentation.xml/CommentRequired">
+        <properties>
+            <property name="methodWithOverrideCommentRequirement" value="Ignored" />
+            <property name="accessorCommentRequirement" value="Ignored" />
+            <property name="classCommentRequirement" value="Required" />
+            <property name="fieldCommentRequirement" value="Ignored" />
+            <property name="publicMethodCommentRequirement" value="Required" />
+            <property name="protectedMethodCommentRequirement" value="Required" />
+            <property name="enumCommentRequirement" value="Required" />
+            <property name="serialVersionUIDCommentRequired" value="Ignored" />
+            <property name="serialPersistentFieldsCommentRequired" value="Ignored" />
+        </properties>
+    </rule>
+    <rule ref="category/java/errorprone.xml">
+        <exclude name="NonSerializableClass"/>
+    </rule>
+    <rule ref="category/java/multithreading.xml" />
+    <rule ref="category/java/performance.xml" />
+    <rule ref="category/java/security.xml" />
+</ruleset>

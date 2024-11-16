@@ -9,6 +9,7 @@ plugins {
     id 'groovy'
     id 'java-gradle-plugin'
     id 'jacoco'
+    id 'pmd'
     alias(libs.plugins.gradle.plugin.publish)
     alias(libs.plugins.shadow)
     alias(libs.plugins.snyk)
@@ -59,6 +60,14 @@ java {
     targetCompatibility = JavaVersion.VERSION_17
 }
 
+pmd {
+    consoleOutput = true
+    toolVersion = "7.7.0"
+    rulesMinimumPriority = 5
+    ruleSetFiles = files('config/pmd/custom.xml')
+    ruleSets = []
+}
+
 snyk {
     arguments = '--all-sub-projects'
     severity = 'low'
@@ -86,9 +95,12 @@ dependencies {
 
 test {
     useJUnitPlatform()
+    dependsOn pmdMain
     finalizedBy(jacocoTestReport)
     finalizedBy('snyk-test')
 }
+
+pmdTest.enabled = false
 
 jar {
     enabled = false
