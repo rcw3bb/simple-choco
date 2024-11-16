@@ -23,7 +23,7 @@ class ChocoInstallTaskTest {
         def chocoTask = project.tasks.chocoInstall
         chocoTask.packages = ["git"]
         String command = chocoTask.executeCommand()
-        String endsWith = "-Verb runas -argumentlist \"\"\"\"install\"\"\"\",\"\"\"\"git\"\"\"\"\""
+        String endsWith = "-Verb runas -argumentlist \"\"\"\"install\"\"\"\",\"\"\"\"git\"\"\"\",\"\"\"\"-y\"\"\"\"\""
         assertTrue(command.contains(endsWith))
     }
 

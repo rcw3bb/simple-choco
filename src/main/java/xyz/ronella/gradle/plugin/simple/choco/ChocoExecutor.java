@@ -21,6 +21,7 @@ import java.util.stream.Collectors;
  * @author Ron Webb
  * @since v1.0.0
  */
+@SuppressWarnings({"PMD.GodClass", "PMD.SystemPrintln", "PMD.CognitiveComplexity", "PMD.CyclomaticComplexity"})
 public final class ChocoExecutor {
 
     private final OSType osType;
@@ -103,6 +104,7 @@ public final class ChocoExecutor {
         return Optional.ofNullable(output);
     }
 
+    @SuppressWarnings({"PMD.OnlyOneReturn", "PMD.ExceptionAsFlowControl"})
     private Optional<File> executable() {
         if (OSType.Windows.equals(osType)) {
             final Optional<Supplier<File>> executable = executables.stream().filter(___execLogic -> ___execLogic.get().exists()).findFirst();
@@ -130,10 +132,10 @@ public final class ChocoExecutor {
                         }
                     }
                     else {
-                        final String missingChocoExecutable = String.format("Cannot find %s and automatic installation is " +
+                        final String missingChocoBin = String.format("Cannot find %s and automatic installation is " +
                                 "disabled, ensure that chocoHome property was set or CHOCOLATEY_HOME environment " +
                                 "variable exists.", ChocoInstaller.EXECUTABLE);
-                        System.err.println(missingChocoExecutable);
+                        System.err.println(missingChocoBin);
                     }
                 } catch (ChocoInstallException cie) {
                     System.err.println("Chocolatey automatic installation failed. Install chocolatey manually.");
@@ -172,6 +174,7 @@ public final class ChocoExecutor {
         return String.format("\"%s\"", text);
     }
 
+    @SuppressWarnings("all")
     private List<String> adminModeCommand(final String executable, final List<String> allArgs) {
         final List<String> fullCommand = getPowershellCommand();
 
@@ -248,6 +251,7 @@ public final class ChocoExecutor {
         return fullCommand;
     }
 
+    @SuppressWarnings("PMD.ConfusingTernary")
     private void executeCommand(final List<String> command) {
         CommandProcessor.process(CommandProcessor.ProcessOutputHandler.captureStreams(
                 (___output, ___error) -> {
@@ -277,6 +281,7 @@ public final class ChocoExecutor {
         return sbCommand.toString();
     }
 
+    @SuppressWarnings({"PMD.ConsecutiveLiteralAppends", "PMD.AppendCharacterWithChar"})
     private List<String> buildScriptCommand(final String scriptFullPath) {
         final List<String> fullCommand = getPowershellCommand();
         final String executable = "powershell.exe";
@@ -298,6 +303,7 @@ public final class ChocoExecutor {
         return fullCommand;
     }
 
+    @SuppressWarnings({"PMD.AvoidFileStream", "PMD.AvoidUncheckedExceptionsInSignatures", "PMD.PreserveStackTrace"})
     private void saveAndExecuteScriptFile(final String script, final Consumer<String> executeLogic)
             throws ChocoScriptException {
 
@@ -338,6 +344,7 @@ public final class ChocoExecutor {
         }
     }
 
+    @SuppressWarnings("PMD.AppendCharacterWithChar")
     private String executeScriptCommands() {
         final StringBuilder sbCommand = new StringBuilder();
         executable().ifPresent(___executable -> {
@@ -359,8 +366,8 @@ public final class ChocoExecutor {
                     }
 
                 });
-            } catch (ChocoScriptException chocoScriptException) {
-                chocoScriptException.printStackTrace(System.err);
+            } catch (ChocoScriptException csException) {
+                csException.printStackTrace(System.err);
             }
         });
         return sbCommand.toString();
@@ -372,12 +379,14 @@ public final class ChocoExecutor {
      * @return The command that wil be exeecuted.
      */
     public String execute() {
+        final String output;
         if (isScriptMode) {
-            return executeScriptCommands();
+            output = executeScriptCommands();
         }
         else {
-            return executeSingleCommand();
+            output = executeSingleCommand();
         }
+        return output;
     }
 
     /**

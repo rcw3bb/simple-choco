@@ -23,7 +23,7 @@ class ChocoUninstallTaskTest {
         def chocoTask = project.tasks.chocoUninstall
         chocoTask.packages = ["git"]
         String command = chocoTask.executeCommand()
-        String endsWith = "-Verb runas -argumentlist \"\"\"\"uninstall\"\"\"\",\"\"\"\"git\"\"\"\"\""
+        String endsWith = "-Verb runas -argumentlist \"\"\"\"uninstall\"\"\"\",\"\"\"\"git\"\"\"\",\"\"\"\"-y\"\"\"\"\""
         assertTrue(command.endsWith(endsWith))
     }
 

@@ -23,7 +23,7 @@ class ChocoUpgradeTaskTest {
         def chocoTask = project.tasks.chocoUpgrade
         chocoTask.packages = ["chocolatey"]
         String command = chocoTask.executeCommand()
-        String endsWith = "-Verb runas -argumentlist \"\"\"\"upgrade\"\"\"\",\"\"\"\"chocolatey\"\"\"\"\""
+        String endsWith = "-Verb runas -argumentlist \"\"\"\"upgrade\"\"\"\",\"\"\"\"chocolatey\"\"\"\",\"\"\"\"-y\"\"\"\"\""
         assertTrue(command.endsWith(endsWith))
     }
 

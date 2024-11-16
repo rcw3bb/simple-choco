@@ -29,6 +29,7 @@ public final class ChocoInstaller {
     /**
      * The default installation location of chocolatey application.
      */
+    @SuppressWarnings("PMD.LongVariable")
     public static final Path DEFAULT_INSTALL_LOCATION = Paths.get(System.getenv("ProgramData"), "chocolatey");
 
     private ChocoInstaller() {}
@@ -71,6 +72,7 @@ public final class ChocoInstaller {
      *
      * @throws ChocoInstallException An instance thrown if the installation failed.
      */
+    @SuppressWarnings({"PMD.SystemPrintln", "PMD.AvoidUncheckedExceptionsInSignatures"})
     public static void install(final String downloadURL) throws ChocoInstallException {
         System.out.println("Installing Chocolatey");
 
