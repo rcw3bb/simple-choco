@@ -15,6 +15,10 @@ abstract class ChocoAddSourceTask extends AbstractChocoSourceTask {
     @Input
     abstract Property<String> getUrl()
 
+    /**
+     * The priority of the source.
+     * @since 2.2.0
+     */
     @Optional @Input
     abstract Property<Integer> getPriority()
 
