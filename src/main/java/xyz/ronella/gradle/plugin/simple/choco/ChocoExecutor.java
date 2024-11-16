@@ -67,7 +67,7 @@ public final class ChocoExecutor {
     }
 
     private void prepareExecutables() {
-        Consumer<Supplier<File>> addExecLogic = ___execLogic -> {
+        final Consumer<Supplier<File>> addExecLogic = ___execLogic -> {
             executables.add(___execLogic);
             isAutoInstall = false;
         };
@@ -80,40 +80,41 @@ public final class ChocoExecutor {
 
         if (executables.isEmpty()) {
             executables.add(() -> Paths.get(ChocoInstaller.DEFAULT_INSTALL_LOCATION.toString(), ChocoInstaller.BIN_DIR, ChocoInstaller.EXECUTABLE).toFile());
-            Optional.ofNullable(getExecutableAuto()).ifPresent(___chocoHome -> executables.add(() -> ___chocoHome));
+            getExecutableAuto().ifPresent(___chocoHome -> executables.add(() -> ___chocoHome));
         }
     }
 
-    private File getExecutableAuto() {
-        StringBuilder sbFqfn = new StringBuilder();
+    private Optional<File> getExecutableAuto() {
+        final StringBuilder sbFqfn = new StringBuilder();
         CommandProcessor.process(CommandProcessor.ProcessOutputHandler.captureOutputs((___output, ___error) ->
                         sbFqfn.append(___output)),
                 CommandArray.wrap(List.of("where", ChocoInstaller.EXECUTABLE)));
 
         String fqfn = sbFqfn.toString();
+        File output = null;
 
         if (!fqfn.isEmpty()) {
             fqfn = fqfn.split("\\r\\n")[0]; //Just the first valid entry of where.
-            File fileExec = new File(fqfn);
+            final File fileExec = new File(fqfn);
             if (fileExec.exists()) {
-                return fileExec;
+                output = fileExec;
             }
         }
-        return null;
+        return Optional.ofNullable(output);
     }
 
     private Optional<File> executable() {
         if (OSType.Windows.equals(osType)) {
-            Optional<Supplier<File>> executable = executables.stream().filter(___execLogic -> ___execLogic.get().exists()).findFirst();
+            final Optional<Supplier<File>> executable = executables.stream().filter(___execLogic -> ___execLogic.get().exists()).findFirst();
             if (executable.isPresent()) {
-                Supplier<File> exec = executable.get();
+                final Supplier<File> exec = executable.get();
                 return Optional.of(exec.get());
             }
             else {
                 try {
                     if (isAutoInstall) {
                         if (!isNoop) {
-                            File installLocation = ChocoInstaller.DEFAULT_INSTALL_LOCATION.toFile();
+                            final File installLocation = ChocoInstaller.DEFAULT_INSTALL_LOCATION.toFile();
                             if (!installLocation.exists()) {
 
                                 System.out.printf("Downloading from %s%n", chocoDownloadURL);
@@ -129,7 +130,7 @@ public final class ChocoExecutor {
                         }
                     }
                     else {
-                        String missingChocoExecutable = String.format("Cannot find %s and automatic installation is " +
+                        final String missingChocoExecutable = String.format("Cannot find %s and automatic installation is " +
                                 "disabled, ensure that chocoHome property was set or CHOCOLATEY_HOME environment " +
                                 "variable exists.", ChocoInstaller.EXECUTABLE);
                         System.err.println(missingChocoExecutable);
@@ -147,7 +148,7 @@ public final class ChocoExecutor {
     }
 
     private List<String> getPowershellCommand() {
-        List<String> shellCommand = new ArrayList<>();
+        final List<String> shellCommand = new ArrayList<>();
         shellCommand.add("powershell.exe");
         shellCommand.add("-NoProfile");
         shellCommand.add("-InputFormat");
@@ -172,23 +173,24 @@ public final class ChocoExecutor {
     }
 
     private List<String> adminModeCommand(final String executable, final List<String> allArgs) {
-        List<String> fullCommand = getPowershellCommand();
+        final List<String> fullCommand = getPowershellCommand();
 
-        StringBuilder sbArgs = new StringBuilder();
+        final StringBuilder sbArgs = new StringBuilder();
         allArgs.forEach(___arg -> sbArgs.append(sbArgs.length()>0 ? ",": "").append(quadQuote(___arg)));
 
-        StringBuilder sbActualCommand = new StringBuilder("\"Start-Process ");
-        sbActualCommand.append(quadQuote(executable));
-        sbActualCommand.append(" -Wait -Verb runas");
-        sbActualCommand.append(sbArgs.length()==0 ? "": " -argumentlist ").append(sbArgs.toString());
-        sbActualCommand.append("\"");
+        final StringBuilder sbActualCommand = new StringBuilder("\"Start-Process ")
+                .append(quadQuote(executable))
+                .append(" -Wait -Verb runas")
+                .append(sbArgs.isEmpty() ? "": " -argumentlist ")
+                .append(sbArgs)
+                .append("\"");
 
         fullCommand.add(sbActualCommand.toString());
         return fullCommand;
     }
 
     private File getDataDirectory() {
-        File dataDirectory = Paths.get(System.getenv("LOCALAPPDATA"), "simple-choco").toFile();
+        final File dataDirectory = Paths.get(System.getenv("LOCALAPPDATA"), "simple-choco").toFile();
         if (!dataDirectory.exists()) {
             dataDirectory.mkdirs();
         }
@@ -196,37 +198,37 @@ public final class ChocoExecutor {
     }
 
     private String getLogFile() {
-        File dataDir = getDataDirectory();
-        File chocoLogFile = Paths.get(dataDir.getAbsolutePath(), "chocolatey.log").toFile();
+        final File dataDir = getDataDirectory();
+        final File chocoLogFile = Paths.get(dataDir.getAbsolutePath(), "chocolatey.log").toFile();
         return chocoLogFile.getAbsolutePath();
     }
 
     private List<String> generateLoggingArg(final String logFile) {
-        List<String> allArgs = new ArrayList<>();
+        final List<String> allArgs = new ArrayList<>();
         allArgs.add("--log-file");
         allArgs.add(logFile);
         return allArgs;
     }
 
-    private List<String> prepareCommand(File chocoExecutable) {
+    private List<String> prepareCommand(final File chocoExecutable) {
         return prepareCommand(chocoExecutable, new ArrayList<>());
     }
 
-    private List<String> prepareCommand(File chocoExecutable, List<String> packageInfo) {
-        String executable = chocoExecutable.getAbsolutePath();
-        List<String> allArgs = new ArrayList<>();
-        List<String> fullCommand = new ArrayList<>();
+    private List<String> prepareCommand(final File chocoExecutable, final List<String> packageInfo) {
+        final String executable = chocoExecutable.getAbsolutePath();
+        final List<String> allArgs = new ArrayList<>();
+        final List<String> fullCommand = new ArrayList<>();
 
         Optional.ofNullable(command).ifPresent(allArgs::add);
         allArgs.addAll(packageInfo);
         allArgs.addAll(args);
         allArgs.addAll(zArgs);
 
-        List<String> commandToRun = new ArrayList<>();
+        final List<String> commandToRun = new ArrayList<>();
         commandToRun.add(executable);
         commandToRun.addAll(allArgs);
 
-        String logFile = getLogFile();
+        final String logFile = getLogFile();
 
         if (showCommand) {
             System.out.println(String.join(" ", commandToRun));
@@ -249,10 +251,10 @@ public final class ChocoExecutor {
     private void executeCommand(final List<String> command) {
         CommandProcessor.process(CommandProcessor.ProcessOutputHandler.captureStreams(
                 (___output, ___error) -> {
-                    BufferedReader output = new BufferedReader(new InputStreamReader(___output));
-                    BufferedReader error = new BufferedReader(new InputStreamReader(___error));
-                    String outputStr = output.lines().collect(Collectors.joining("\n"));
-                    String errorStr = error.lines().collect(Collectors.joining("\n"));
+                    final BufferedReader output = new BufferedReader(new InputStreamReader(___output));
+                    final BufferedReader error = new BufferedReader(new InputStreamReader(___error));
+                    final String outputStr = output.lines().collect(Collectors.joining("\n"));
+                    final String errorStr = error.lines().collect(Collectors.joining("\n"));
 
                     if (!errorStr.isEmpty()) {
                         System.err.println(errorStr);
@@ -264,9 +266,9 @@ public final class ChocoExecutor {
     }
 
     private String executeSingleCommand() {
-        StringBuilder sbCommand = new StringBuilder();
+        final StringBuilder sbCommand = new StringBuilder();
         executable().ifPresent(___executable -> {
-            List<String> fullCommand = prepareCommand(___executable);
+            final List<String> fullCommand = prepareCommand(___executable);
             sbCommand.append(String.join(" ", fullCommand).trim());
             if (!isNoop) {
                 executeCommand(fullCommand);
@@ -276,16 +278,16 @@ public final class ChocoExecutor {
     }
 
     private List<String> buildScriptCommand(final String scriptFullPath) {
-        List<String> fullCommand = getPowershellCommand();
-        String executable = "powershell.exe";
+        final List<String> fullCommand = getPowershellCommand();
+        final String executable = "powershell.exe";
 
         if (isAdminMode) {
-            StringBuilder sbActualCommand = new StringBuilder("\"Start-Process ");
-            sbActualCommand.append(executable);
-            sbActualCommand.append(" -Wait -Verb runas");
-            sbActualCommand.append(" -argumentlist \"\"\"\"-NoProfile\"\"\"\",\"\"\"\"-InputFormat\"\"\"\",\"\"\"\"None\"\"\"\",\"\"\"\"-ExecutionPolicy\"\"\"\",\"\"\"\"Bypass\"\"\"\",\"\"\"\"-Command\"\"\"\",");
-            sbActualCommand.append(quadQuote(String.format("%s %s", executable, doubleQuote(quadQuote(scriptFullPath)))));
-            sbActualCommand.append("\"");
+            final StringBuilder sbActualCommand = new StringBuilder("\"Start-Process ")
+                    .append(executable)
+                    .append(" -Wait -Verb runas")
+                    .append(" -argumentlist \"\"\"\"-NoProfile\"\"\"\",\"\"\"\"-InputFormat\"\"\"\",\"\"\"\"None\"\"\"\",\"\"\"\"-ExecutionPolicy\"\"\"\",\"\"\"\"Bypass\"\"\"\",\"\"\"\"-Command\"\"\"\",")
+                    .append(quadQuote(String.format("%s %s", executable, doubleQuote(quadQuote(scriptFullPath)))))
+                    .append("\"");
 
             fullCommand.add(sbActualCommand.toString());
         }
@@ -299,11 +301,11 @@ public final class ChocoExecutor {
     private void saveAndExecuteScriptFile(final String script, final Consumer<String> executeLogic)
             throws ChocoScriptException {
 
-        File dataDir = getDataDirectory();
-        File scriptFile = Paths.get(dataDir.getAbsolutePath(), String.format("%s.ps1", taskName)).toFile();
+        final File dataDir = getDataDirectory();
+        final File scriptFile = Paths.get(dataDir.getAbsolutePath(), String.format("%s.ps1", taskName)).toFile();
 
         try {
-            String scriptFullPath = scriptFile.getAbsolutePath();
+            final String scriptFullPath = scriptFile.getAbsolutePath();
 
             if (!scriptFile.exists()) {
                 try {
@@ -337,16 +339,16 @@ public final class ChocoExecutor {
     }
 
     private String executeScriptCommands() {
-        StringBuilder sbCommand = new StringBuilder();
+        final StringBuilder sbCommand = new StringBuilder();
         executable().ifPresent(___executable -> {
             packages.forEach(___package -> {
-                List<String> fullCommand = prepareCommand( ___executable, ___package);
-                sbCommand.append(String.join(" ", fullCommand).trim());
-                sbCommand.append("\n");
+                final List<String> fullCommand = prepareCommand( ___executable, ___package);
+                sbCommand.append(String.join(" ", fullCommand).trim())
+                        .append("\n");
             });
             try {
                 saveAndExecuteScriptFile(sbCommand.toString(), ___scriptFullPath -> {
-                    List<String> fullCommand = buildScriptCommand(___scriptFullPath);
+                    final List<String> fullCommand = buildScriptCommand(___scriptFullPath);
 
                     if (isNoop) {
                         sbCommand.append(String.join(" ", fullCommand));
@@ -386,9 +388,9 @@ public final class ChocoExecutor {
      * @throws RuntimeException if the command cannot be executed due to a MissingCommandException.
      */
     public String executeSingleCommand(final BiConsumer<InputStream, InputStream> logic) {
-        StringBuilder sbCommand = new StringBuilder();
+        final StringBuilder sbCommand = new StringBuilder();
         executable().ifPresent(___executable -> {
-            List<String> fullCommand = prepareCommand(___executable);
+            final List<String> fullCommand = prepareCommand(___executable);
             sbCommand.append(String.join(" ", fullCommand).trim());
 
             if (!isNoop) {
@@ -414,7 +416,7 @@ public final class ChocoExecutor {
      * @author Ron Webb
      * @since v1.0.0
      */
-    public static class ChocoExecutorBuilder {
+    final public static class ChocoExecutorBuilder {
         private boolean showCommand;
         private OSType osType;
         private boolean isAutoInstall;
@@ -457,7 +459,7 @@ public final class ChocoExecutor {
          *
          * @return An instance of the builder.
          */
-        public ChocoExecutorBuilder addAutoInstall(boolean isAutoInstall) {
+        public ChocoExecutorBuilder addAutoInstall(final boolean isAutoInstall) {
             this.isAutoInstall = isAutoInstall;
             return this;
         }
@@ -520,7 +522,7 @@ public final class ChocoExecutor {
          *
          * @return An instance of the builder.
          */
-        public ChocoExecutorBuilder addNoop(boolean noop) {
+        public ChocoExecutorBuilder addNoop(final boolean noop) {
             this.isNoop = noop;
             return this;
         }
@@ -531,7 +533,7 @@ public final class ChocoExecutor {
          *
          * @return An instance of the builder.
          */
-        public ChocoExecutorBuilder addAdminMode(boolean isAdminMode) {
+        public ChocoExecutorBuilder addAdminMode(final boolean isAdminMode) {
             this.isAdminMode = isAdminMode;
             return this;
         }
@@ -542,7 +544,7 @@ public final class ChocoExecutor {
          *
          * @return An instance of the builder.
          */
-        public ChocoExecutorBuilder addLogging(boolean hasLogging) {
+        public ChocoExecutorBuilder addLogging(final boolean hasLogging) {
             this.hasLogging = hasLogging;
             return this;
         }
@@ -555,7 +557,7 @@ public final class ChocoExecutor {
          *
          * @since 1.1.0
          */
-        public ChocoExecutorBuilder addRunningOnAdmin(boolean runningOnAdmin) {
+        public ChocoExecutorBuilder addRunningOnAdmin(final boolean runningOnAdmin) {
             this.isRunningOnAdmin = runningOnAdmin;
             return this;
         }
@@ -568,7 +570,7 @@ public final class ChocoExecutor {
          *
          * @since 1.1.0
          */
-        public ChocoExecutorBuilder addForceAdminMode(boolean forceAdminMode) {
+        public ChocoExecutorBuilder addForceAdminMode(final boolean forceAdminMode) {
             this.forceAdminMode = forceAdminMode;
             return this;
         }
@@ -581,7 +583,7 @@ public final class ChocoExecutor {
          *
          * @since 1.1.0
          */
-        public ChocoExecutorBuilder addScriptMode(boolean scriptMode) {
+        public ChocoExecutorBuilder addScriptMode(final boolean scriptMode) {
             this.isScriptMode = scriptMode;
             return this;
         }
@@ -620,7 +622,7 @@ public final class ChocoExecutor {
          *
          * @since 1.1.0
          */
-        public ChocoExecutorBuilder addNoScriptDeletion(boolean noScriptDeletion) {
+        public ChocoExecutorBuilder addNoScriptDeletion(final boolean noScriptDeletion) {
             this.noScriptDeletion = noScriptDeletion;
             return this;
         }

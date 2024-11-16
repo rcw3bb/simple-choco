@@ -16,8 +16,6 @@ import java.util.List;
  */
 public final class ChocoInstaller {
 
-    private ChocoInstaller() {}
-
     /**
      * The choco executor filename.
      */
@@ -33,15 +31,17 @@ public final class ChocoInstaller {
      */
     public static final Path DEFAULT_INSTALL_LOCATION = Paths.get(System.getenv("ProgramData"), "chocolatey");
 
+    private ChocoInstaller() {}
+
     /**
      * The command and parameters that will install the chocolatey application.
      *
      * @return A list that contains the installation command.
      */
     private List<String> getInstallCommand(final String downloadURL) {
-        final String POWER_SHELL = "PowerShell.Exe";
+        final String powershellCommand = "PowerShell.Exe";
 
-        String installCommand = String.format("\"Start-Process powershell -Wait -Verb runas -argumentlist " +
+        final String installCommand = String.format("\"Start-Process powershell -Wait -Verb runas -argumentlist " +
                 "\"\"\"\"-NoProfile\"\"\"\"," +
                 "\"\"\"\"-InputFormat\"\"\"\"," +
                 "\"\"\"\"None\"\"\"\"," +
@@ -51,8 +51,8 @@ public final class ChocoInstaller {
                 "\"\"\"\"[System.Net.ServicePointManager]::SecurityProtocol = 3072; " +
                 "iex ((New-Object System.Net.WebClient).DownloadString('%s'))\"\"\"\"\"", downloadURL);
 
-        List<String> command = new ArrayList<>();
-        command.add(POWER_SHELL);
+        final List<String> command = new ArrayList<>();
+        command.add(powershellCommand);
         command.add("-NoProfile");
         command.add("-InputFormat");
         command.add("None");
@@ -72,8 +72,8 @@ public final class ChocoInstaller {
     public static void install(final String downloadURL) throws ChocoInstallException {
         System.out.println("Installing Chocolatey");
 
-        ChocoInstaller chocoInstaller = new ChocoInstaller();
-        var command = chocoInstaller.getInstallCommand(downloadURL);
+        final ChocoInstaller chocoInstaller = new ChocoInstaller();
+        final var command = chocoInstaller.getInstallCommand(downloadURL);
 
         CommandProcessor.process(CommandProcessor.ProcessOutputHandler.captureOutputs((___output, ___error) -> {
             if (!___error.isEmpty()) {

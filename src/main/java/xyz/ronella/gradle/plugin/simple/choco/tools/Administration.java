@@ -11,7 +11,7 @@ import java.nio.file.Paths;
  * @author Ron Webb
  * @since 1.1.0
  */
-public class Administration {
+final public class Administration {
 
     private Administration() {}
 
@@ -22,23 +22,22 @@ public class Administration {
      * @since 1.1.0
      */
     public static boolean isElevatedMode() {
-        String pid = ManagementFactory.getRuntimeMXBean().getName().replace("@", "-");
-        String fileName = String.format("simple-choco-%s.dummy", pid);
-        File file = Paths.get(System.getenv("SystemRoot"), fileName).toFile();
+        final String pid = ManagementFactory.getRuntimeMXBean().getName().replace("@", "-");
+        final String fileName = String.format("simple-choco-%s.dummy", pid);
+        final File file = Paths.get(System.getenv("SystemRoot"), fileName).toFile();
+        boolean output = false;
         try {
             if (file.createNewFile()) {
                 file.delete();
-                return true;
+                output = true;
             }
         } catch (IOException e) {
-            if ("Access is denied".equalsIgnoreCase(e.getMessage())) {
-                return false;
-            }
-            else {
+            final var deniedMessage = "Access is denied";
+            if (!deniedMessage.equalsIgnoreCase(e.getMessage())) {
                 e.printStackTrace(System.err);
             }
         }
-        return false;
+        return output;
     }
 
 }
