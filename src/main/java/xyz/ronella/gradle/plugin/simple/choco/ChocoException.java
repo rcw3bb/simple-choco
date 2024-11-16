@@ -21,7 +21,7 @@ public class ChocoException extends GradleException {
      * Constructor
      * @param message The exception message.
      */
-    public ChocoException(String message) {
+    public ChocoException(final String message) {
         super(message);
     }
 

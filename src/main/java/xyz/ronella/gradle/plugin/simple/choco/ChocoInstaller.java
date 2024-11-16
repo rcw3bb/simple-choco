@@ -38,7 +38,7 @@ public final class ChocoInstaller {
      *
      * @return A list that contains the installation command.
      */
-    public List<String> getInstallCommand(String downloadURL) {
+    private List<String> getInstallCommand(final String downloadURL) {
         final String POWER_SHELL = "PowerShell.Exe";
 
         String installCommand = String.format("\"Start-Process powershell -Wait -Verb runas -argumentlist " +

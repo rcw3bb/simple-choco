@@ -45,7 +45,7 @@ public final class ChocoExecutor {
      *
      * @param builder An instance of ChocoExecutorBuilder
      */
-    private ChocoExecutor(ChocoExecutorBuilder builder) {
+    private ChocoExecutor(final ChocoExecutorBuilder builder) {
         executables = new ArrayList<>();
         osType = builder.osType==null ? OSType.identify() : builder.osType;
         isAutoInstall = builder.isAutoInstall;
@@ -159,19 +159,19 @@ public final class ChocoExecutor {
         return new ArrayList<>(shellCommand);
     }
 
-    private String quadQuote(String text) {
+    private String quadQuote(final String text) {
         return String.format("\"\"\"\"%s\"\"\"\"", text);
     }
 
-    private String doubleQuote(String text) {
+    private String doubleQuote(final String text) {
         return String.format("\"\"%s\"\"", text);
     }
 
-    private String singleQuote(String text) {
+    private String singleQuote(final String text) {
         return String.format("\"%s\"", text);
     }
 
-    private List<String> adminModeCommand(String executable, List<String> allArgs) {
+    private List<String> adminModeCommand(final String executable, final List<String> allArgs) {
         List<String> fullCommand = getPowershellCommand();
 
         StringBuilder sbArgs = new StringBuilder();
@@ -201,7 +201,7 @@ public final class ChocoExecutor {
         return chocoLogFile.getAbsolutePath();
     }
 
-    private List<String> generateLoggingArg(String logFile) {
+    private List<String> generateLoggingArg(final String logFile) {
         List<String> allArgs = new ArrayList<>();
         allArgs.add("--log-file");
         allArgs.add(logFile);
@@ -275,7 +275,7 @@ public final class ChocoExecutor {
         return sbCommand.toString();
     }
 
-    private List<String> buildScriptCommand(String scriptFullPath) {
+    private List<String> buildScriptCommand(final String scriptFullPath) {
         List<String> fullCommand = getPowershellCommand();
         String executable = "powershell.exe";
 
@@ -296,7 +296,9 @@ public final class ChocoExecutor {
         return fullCommand;
     }
 
-    private void saveAndExecuteScriptFile(String script, Consumer<String> executeLogic) throws ChocoScriptException {
+    private void saveAndExecuteScriptFile(final String script, final Consumer<String> executeLogic)
+            throws ChocoScriptException {
+
         File dataDir = getDataDirectory();
         File scriptFile = Paths.get(dataDir.getAbsolutePath(), String.format("%s.ps1", taskName)).toFile();
 
@@ -383,7 +385,7 @@ public final class ChocoExecutor {
      * @return The command that was executed as a String.
      * @throws RuntimeException if the command cannot be executed due to a MissingCommandException.
      */
-    public String executeSingleCommand(BiConsumer<InputStream, InputStream> logic) {
+    public String executeSingleCommand(final BiConsumer<InputStream, InputStream> logic) {
         StringBuilder sbCommand = new StringBuilder();
         executable().ifPresent(___executable -> {
             List<String> fullCommand = prepareCommand(___executable);
@@ -443,7 +445,7 @@ public final class ChocoExecutor {
          *
          * @return An instance of the builder.
          */
-        public ChocoExecutorBuilder addOSType(OSType osType) {
+        public ChocoExecutorBuilder addOSType(final OSType osType) {
             this.osType = osType;
             return this;
         }
@@ -467,7 +469,7 @@ public final class ChocoExecutor {
          *
          * @return An instance of the builder.
          */
-        public ChocoExecutorBuilder addChocoHome(File chocoHome) {
+        public ChocoExecutorBuilder addChocoHome(final File chocoHome) {
             this.chocoHome = chocoHome;
             return this;
         }
@@ -479,7 +481,7 @@ public final class ChocoExecutor {
          *
          * @return An instance of the builder.
          */
-        public ChocoExecutorBuilder addCommand(String command) {
+        public ChocoExecutorBuilder addCommand(final String command) {
             this.command = command;
             return this;
         }
@@ -491,7 +493,7 @@ public final class ChocoExecutor {
          *
          * @return An instance of the builder.
          */
-        public ChocoExecutorBuilder addArgs(String ... args) {
+        public ChocoExecutorBuilder addArgs(final String ... args) {
             if (args.length>0) {
                 this.args.addAll(Arrays.asList(args));
             }
@@ -505,7 +507,7 @@ public final class ChocoExecutor {
          *
          * @return An instance of the builder.
          */
-        public ChocoExecutorBuilder addZArgs(String ... args) {
+        public ChocoExecutorBuilder addZArgs(final String ... args) {
             if (args.length>0) {
                 this.zArgs.addAll(Arrays.asList(args));
             }
@@ -592,7 +594,7 @@ public final class ChocoExecutor {
          *
          * @since 1.1.0
          */
-        public ChocoExecutorBuilder addTaskName(String taskName) {
+        public ChocoExecutorBuilder addTaskName(final String taskName) {
             this.taskName = taskName;
             return this;
         }
@@ -605,7 +607,7 @@ public final class ChocoExecutor {
          *
          * @since 1.1.0
          */
-        public ChocoExecutorBuilder addPackages(List<List<String>> packages) {
+        public ChocoExecutorBuilder addPackages(final List<List<String>> packages) {
             this.packages = packages;
             return this;
         }
@@ -641,7 +643,7 @@ public final class ChocoExecutor {
          * @return An instance of the builder.
          * @since 2.1.0
          */
-        public ChocoExecutorBuilder addChocoDownloadURL(String chocoDownloadURL) {
+        public ChocoExecutorBuilder addChocoDownloadURL(final String chocoDownloadURL) {
             this.chocoDownloadURL = chocoDownloadURL;
             return this;
         }
