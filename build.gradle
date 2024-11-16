@@ -104,5 +104,7 @@ pmdTest.enabled = false
 
 jar {
     enabled = false
-    dependsOn shadowJar
+    dependsOn test, shadowJar
 }
+
+shadowJar.mustRunAfter(test)
