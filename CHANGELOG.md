@@ -1,5 +1,15 @@
 # Changelog
 
+## 3.0.0 : 2024-11-17
+
+### New
+
+* Add priority convenience parameter for ChocoAddSourceTask.
+
+### Change
+
+* Both **chocoScript** and **chocoScriptAdmin** tasks are updated to only accept **commands** property. Both the **command** and **packages** properties are not applicable anymore.
+
 ## 2.1.0 : 2024-11-16
 
 ### New

@@ -13,7 +13,7 @@ In your **build.gradle** file add the following plugin:
 
 ```groovy
 plugins {
-    id "xyz.ronella.simple-choco" version "2.1.0"
+    id "xyz.ronella.simple-choco" version "3.0.0"
 }
 ```
 
@@ -201,14 +201,15 @@ task installSoftwares(type: ChocoInstallTask ) {
 | --------------- | ------------- | ------- | ------- | ------- |
 | chocoAddSource | sourceName |String  | Yes         |The task for adding a chocolatey source repository.  |
 |  | url |String | | |
+| | priority |Integer | | |
 | chocoAdminTask | args |String[] | Yes | The task for executing a choco commands in administration mode. |
 | | command |String | | |
 | | zargs |String[] | | |
 | chocoInstall | packages |String[]  |Yes  |The task for installing packages.  |
 | chocoListInstalled |  |||The task for listing install packages with choco.|
 | chocoRemoveSource | sourceName |String  |Yes  |The task for removing a chocolatey source repository.  |
-| chocoScript | packages |List<List<String>> | |The task that generates a temporary script file that contains the command packages to be executed in sequence. <br /><br />Note this task requires the **command** property. |
-| chocoScriptAdmin | packages |List<List<String>> |Yes |The task that generates a temporary script file that contains the command packages to be executed in sequence in administration mode.<br />Note this task requires the **command** property. |
+| chocoScript | commands |List<List<String>> | |The task that generates a temporary script file that contains the commands to be executed in sequence. |
+| chocoScriptAdmin | commands |List<List<String>> |Yes |The task that generates a temporary script file that contains the commands to be executed in sequence in administration mode. |
 | chocoScriptInstall | packages |List<List<String>> |Yes |The task for installing packages using a temporary script. |
 | chocoScriptUninstall | packages |List<List<String>> |Yes |The task for uninstalling packages using a temporary script. |
 | chocoScriptUpgrade | packages |List<List<String>> |Yes |The task for upgrading packages using a temporary script. |
