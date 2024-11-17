@@ -8,7 +8,7 @@ import xyz.ronella.gradle.plugin.simple.choco.ChocoScriptException
  * The base class of all the task in package mode.
  *
  * @author Ron Webb
- * @since 2.2.0
+ * @since 3.0.0
  */
 abstract class AbstractChocoScriptPackageTask extends AbstractChocoScriptAdminTask {
 

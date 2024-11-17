@@ -3,7 +3,7 @@ package xyz.ronella.gradle.plugin.simple.choco.task
  * The base class of all the task in script mode.
  *
  * @author Ron Webb
- * @since 2.2.0
+ * @since 3.0.0
  */
 abstract class AbstractChocoScriptTask extends ChocoTask {
 
