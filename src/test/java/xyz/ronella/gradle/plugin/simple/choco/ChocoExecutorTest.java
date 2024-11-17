@@ -101,7 +101,7 @@ public class ChocoExecutorTest {
                 .addScriptMode(true)
                 .addCommand("install")
                 .addTaskName("testTask")
-                .addPackages(Arrays.asList(
+                .addCommands(Arrays.asList(
                         Arrays.asList("git", "/NoAutoCrlf", "/WindowsTerminal", "/SChannel"),
                         Collections.singletonList("notepadplusplus"),
                         Collections.singletonList("lzip")
@@ -124,7 +124,7 @@ public class ChocoExecutorTest {
                 .addScriptMode(true)
                 .addCommand("install")
                 .addTaskName("testTask")
-                .addPackages(Arrays.asList(
+                .addCommands(Arrays.asList(
                         Arrays.asList("git", "/NoAutoCrlf", "/WindowsTerminal", "/SChannel"),
                         Collections.singletonList("notepadplusplus"),
                         Collections.singletonList("lzip")

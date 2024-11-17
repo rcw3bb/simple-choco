@@ -5,7 +5,7 @@ package xyz.ronella.gradle.plugin.simple.choco.task
  * @author Ron Webb
  * @since 1.1.0
  */
-abstract class ChocoScriptInstallTask extends ChocoScriptAdminTask {
+abstract class ChocoScriptInstallTask extends AbstractChocoScriptPackageTask {
 
     ChocoScriptInstallTask() {
         description = "Install packages from chocolatey sources by script."

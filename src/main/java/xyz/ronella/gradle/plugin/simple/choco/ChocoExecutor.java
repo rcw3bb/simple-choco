@@ -36,7 +36,7 @@ public final class ChocoExecutor {
     private final boolean hasLogging;
     private final String taskName;
     private final boolean isScriptMode;
-    private final List<List<String>> packages;
+    private final List<List<String>> commands;
     private final boolean noScriptDeletion;
     private final boolean showCommand;
     private final String chocoDownloadURL;
@@ -59,7 +59,7 @@ public final class ChocoExecutor {
         isAdminMode = (!builder.isRunningOnAdmin || builder.forceAdminMode) && builder.isAdminMode;
         taskName = builder.taskName;
         isScriptMode = builder.isScriptMode;
-        packages = builder.packages;
+        commands = builder.commands;
         noScriptDeletion = builder.noScriptDeletion;
         showCommand = builder.showCommand;
         chocoDownloadURL = builder.chocoDownloadURL;
@@ -348,7 +348,7 @@ public final class ChocoExecutor {
     private String executeScriptCommands() {
         final StringBuilder sbCommand = new StringBuilder();
         executable().ifPresent(___executable -> {
-            packages.forEach(___package -> {
+            commands.forEach(___package -> {
                 final List<String> fullCommand = prepareCommand( ___executable, ___package);
                 sbCommand.append(String.join(" ", fullCommand).trim())
                         .append("\n");
@@ -440,7 +440,7 @@ public final class ChocoExecutor {
         private boolean forceAdminMode;
         private String taskName;
         private boolean isScriptMode;
-        private List<List<String>> packages;
+        private List<List<String>> commands;
         private boolean noScriptDeletion;
         private String chocoDownloadURL;
 
@@ -612,14 +612,14 @@ public final class ChocoExecutor {
 
         /**
          * The the packages to be scripted.
-         * @param packages The name of the task.
+         * @param commands The name of the task.
          *
          * @return An instance of the builder.
          *
          * @since 1.1.0
          */
-        public ChocoExecutorBuilder addPackages(final List<List<String>> packages) {
-            this.packages = packages;
+        public ChocoExecutorBuilder addCommands(final List<List<String>> commands) {
+            this.commands = commands;
             return this;
         }
 

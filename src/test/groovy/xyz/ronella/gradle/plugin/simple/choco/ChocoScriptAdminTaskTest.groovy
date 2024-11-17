@@ -6,7 +6,7 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import xyz.ronella.gradle.plugin.simple.choco.task.ChocoScriptTask
 
-import static org.junit.jupiter.api.Assertions.assertNull
+import static org.junit.jupiter.api.Assertions.assertThrows
 import static org.junit.jupiter.api.Assertions.assertTrue
 
 class ChocoScriptAdminTaskTest {
@@ -20,26 +20,32 @@ class ChocoScriptAdminTaskTest {
     }
 
     @Test
-    void noParameters() {
+    void withCommandArg() {
         ChocoScriptTask chocoTask = project.tasks.chocoScriptAdmin
-        String command = chocoTask.executeCommand()
-        assertNull(command)
+        chocoTask.command = "install"
+        assertThrows(ChocoScriptException.class, {
+            chocoTask.executeCommand()
+        })
     }
 
     @Test
-    void commandNoPackages() {
+    void withEmptyCommand() {
         ChocoScriptTask chocoTask = project.tasks.chocoScriptAdmin
-        chocoTask.command = "install"
-        String command = chocoTask.executeCommand()
-        assertNull(command)
+        chocoTask.commands = []
+        assertThrows(ChocoScriptException.class, {
+            chocoTask.executeCommand()
+        })
     }
 
     @Test
-    void withCommandAndAPackage() {
+    void withCommands() {
         ChocoScriptTask chocoTask = project.tasks.chocoScriptAdmin
-        chocoTask.command = "install"
-        chocoTask.packages = [["notepadplusplus"]]
+        chocoTask.commands = [
+                ["source", "add", "--name", "source1", "--source", "https://test.com"],
+                ["source", "add", "--name", "source2", "--source", "https://test.com"]
+        ]
         String command = chocoTask.executeCommand()
-        assertTrue(command.contains("powershell") && command.contains("runas"))
+        assertTrue(command.contains("source1") && command.contains("source2"))
     }
+
 }

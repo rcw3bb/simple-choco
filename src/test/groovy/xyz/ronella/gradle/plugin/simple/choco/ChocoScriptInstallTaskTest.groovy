@@ -5,6 +5,7 @@ import org.gradle.testfixtures.ProjectBuilder
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
+import static org.junit.jupiter.api.Assertions.assertThrows
 import static org.junit.jupiter.api.Assertions.assertTrue
 
 class ChocoScriptInstallTaskTest {
@@ -15,6 +16,16 @@ class ChocoScriptInstallTaskTest {
         project = ProjectBuilder.builder().build()
         project.pluginManager.apply 'xyz.ronella.simple-choco'
         project.extensions.simple_choco.isNoop = true
+    }
+
+
+    @Test
+    void emptyPackages() {
+        def chocoTask = project.tasks.chocoScriptInstall
+        chocoTask.packages = []
+        assertThrows(ChocoScriptException.class, {
+            chocoTask.executeCommand()
+        })
     }
 
     @Test

@@ -61,7 +61,7 @@ abstract class ChocoTask extends DefaultTask {
         return false
     }
 
-    protected ListProperty<List<String>> packagesToScript() {
+    protected ListProperty<List<String>> commandsToScript() {
         return project.objects.<List<String>>listProperty(List<String>.class)
     }
 
@@ -82,7 +82,7 @@ abstract class ChocoTask extends DefaultTask {
                 .addRunningOnAdmin(Administration.isElevatedMode())
                 .addForceAdminMode(EXTENSION.forceAdminMode.get())
                 .addScriptMode(scriptMode())
-                .addPackages(packagesToScript().get())
+                .addCommands(commandsToScript().get())
                 .addTaskName(name)
                 .addNoScriptDeletion(EXTENSION.noScriptDeletion.get())
                 .addChocoDownloadURL(EXTENSION.chocoDownloadURL.get())

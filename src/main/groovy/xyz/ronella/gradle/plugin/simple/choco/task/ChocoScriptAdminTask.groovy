@@ -9,7 +9,8 @@ package xyz.ronella.gradle.plugin.simple.choco.task
 abstract class ChocoScriptAdminTask extends ChocoScriptTask {
 
     ChocoScriptAdminTask() {
-        description = 'Creates a script that contains the packages before executing in administration mode'
+        super()
+        description = 'Creates a script that contains the commands before executing in administration mode'
         isAdminMode.convention(true)
     }
 

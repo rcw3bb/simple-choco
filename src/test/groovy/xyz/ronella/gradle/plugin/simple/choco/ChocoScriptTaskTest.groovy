@@ -19,27 +19,29 @@ class ChocoScriptTaskTest {
     }
 
     @Test
-    void noParameters() {
+    void withCommandArg() {
         ChocoScriptTask chocoTask = project.tasks.chocoScript
-        String command = chocoTask.executeCommand()
-        assertNull(command)
+        chocoTask.command = "install"
+        assertThrows(ChocoScriptException.class, {
+            chocoTask.executeCommand()
+        })
     }
 
     @Test
-    void commandNoPackages() {
+    void withEmptyCommand() {
         ChocoScriptTask chocoTask = project.tasks.chocoScript
-        chocoTask.command = "install"
-        String command = chocoTask.executeCommand()
-        assertNull(command)
+        chocoTask.commands = []
+        assertThrows(ChocoScriptException.class, {
+            chocoTask.executeCommand()
+        })
     }
 
     @Test
-    void withCommandAndAPackage() {
+    void withCommands() {
         ChocoScriptTask chocoTask = project.tasks.chocoScript
-        chocoTask.command = "install"
-        chocoTask.packages = [["notepadplusplus"]]
+        chocoTask.commands = [["--version"], ["list"]]
         String command = chocoTask.executeCommand()
-        assertTrue(command.contains("powershell") && !command.contains("runas"))
+        assertTrue(command.contains("--version") && command.contains("list"))
     }
 
 }
