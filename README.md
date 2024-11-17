@@ -33,8 +33,8 @@ plugins {
 > chocoInstall - Install packages from the chocolatey sources.
 > chocoListInstalled - Lists locally installed packages by chocolatey.
 > chocoRemoveSource - Removes a source to where chocolatey search for a package.
-> chocoScript - Creates a script that contains the packages before executing
-> chocoScriptAdmin - Creates a script that contains the packages before executing in administration mode
+> chocoScript - Creates a script that contains the commands before execution.
+> chocoScriptAdmin - Creates a script that contains the commands before execution in administration mode.
 > chocoScriptInstall - Install packages from chocolatey sources by script.
 > chocoScriptUninstall - Uninstall packages installed by chocolatey by script.
 > chocoScriptUpgrade - Upgrade installed chocolatey packages by script.
