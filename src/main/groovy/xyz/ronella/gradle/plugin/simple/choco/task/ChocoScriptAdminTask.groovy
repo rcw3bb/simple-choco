@@ -10,7 +10,7 @@ abstract class ChocoScriptAdminTask extends ChocoScriptTask {
 
     ChocoScriptAdminTask() {
         super()
-        description = 'Creates a script that contains the commands before executing in administration mode'
+        description = 'Creates a script that contains the commands before execution in administration mode.'
         isAdminMode.convention(true)
     }
 

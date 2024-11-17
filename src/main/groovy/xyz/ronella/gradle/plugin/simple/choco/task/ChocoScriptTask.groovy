@@ -17,7 +17,7 @@ abstract class ChocoScriptTask extends AbstractChocoScriptTask {
 
     ChocoScriptTask() {
         super()
-        description = 'Creates a script that contains the packages before executing in package mode'
+        description = 'Creates a script that contains the commands before execution.'
         commands.convention([])
     }
 
