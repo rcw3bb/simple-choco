@@ -13,7 +13,7 @@ In your **build.gradle** file add the following plugin:
 
 ```groovy
 plugins {
-    id "xyz.ronella.simple-choco" version "3.0.0"
+    id "xyz.ronella.simple-choco" version "3.0.1"
 }
 ```
 
