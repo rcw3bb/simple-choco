@@ -1,5 +1,10 @@
 # Changelog
 
+## 3.1.0 : 2025-09-21
+
+### New
+* Now tested with Gradle 9.
+
 ## 3.0.1 : 2024-12-09
 
 ### Minor Change

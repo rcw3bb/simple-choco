@@ -13,7 +13,7 @@ In your **build.gradle** file add the following plugin:
 
 ```groovy
 plugins {
-    id "xyz.ronella.simple-choco" version "3.0.1"
+    id "xyz.ronella.simple-choco" version "3.1.0"
 }
 ```
 
@@ -186,7 +186,7 @@ task installSoftwares(type: ChocoScriptInstallTask ) {
 
 ``` groovy
 plugins {
-  id "xyz.ronella.simple-choco" version "2.0.0"
+  id "xyz.ronella.simple-choco" version "3.1.0"
 }
 
 simple_choco.defaultInstallArgs=['-y']
