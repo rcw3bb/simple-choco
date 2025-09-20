@@ -3,6 +3,7 @@ package xyz.ronella.gradle.plugin.simple.choco.task
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.tasks.Input
+import xyz.ronella.gradle.plugin.simple.choco.ChocoExecutor
 import xyz.ronella.gradle.plugin.simple.choco.ChocoScriptException
 
 import javax.inject.Inject
@@ -39,7 +40,8 @@ abstract class AbstractChocoScriptPackageTask extends AbstractChocoScriptAdminTa
             throw new ChocoScriptException("At least one package is required")
         }
         else {
-            return super.executeCommand()
+            ChocoExecutor executor = ChocoExecutorHelper.createExecutor(this)
+            return executor.execute()
         }
     }
 

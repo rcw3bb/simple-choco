@@ -74,28 +74,7 @@ abstract class ChocoTask extends DefaultTask {
 
     @TaskAction
     String executeCommand() {
-        def extension = getExtension().get()
-
-        ChocoExecutor executor = ChocoExecutor.getBuilder()
-                .addAutoInstall(extension.isAutoInstall.get())
-                .addNoop(extension.isNoop.get())
-                .addChocoHome(extension.chocoHome.getOrNull())
-                .addAdminMode(isAdminMode.get())
-                .addCommand(internalCommand.isPresent() ? internalCommand.get() : command.get())
-                .addArgs(internalArgs.get().toArray((String[])[]))
-                .addArgs(args.get().toArray((String[])[]))
-                .addArgs(internalZArgs.get().toArray((String[])[]))
-                .addZArgs(getZArgs().get().toArray((String[])[]))
-                .addLogging(hasLogging.get())
-                .addRunningOnAdmin(Administration.isElevatedMode())
-                .addForceAdminMode(extension.forceAdminMode.get())
-                .addScriptMode(scriptMode())
-                .addCommands(commandsToScript().get())
-                .addTaskName(name)
-                .addNoScriptDeletion(extension.noScriptDeletion.get())
-                .addChocoDownloadURL(extension.chocoDownloadURL.get())
-                .build()
-
+        ChocoExecutor executor = ChocoExecutorHelper.createExecutor(this)
         executor.execute()
     }
 }

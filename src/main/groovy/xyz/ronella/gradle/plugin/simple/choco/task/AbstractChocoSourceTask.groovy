@@ -57,6 +57,7 @@ abstract class AbstractChocoSourceTask extends ChocoAdminTask {
     @Override
     String executeCommand() {
         internalArgs.add(String.format("-n=%s", sourceName.get()))
-        super.executeCommand()
+        ChocoExecutor executor = ChocoExecutorHelper.createExecutor(this)
+        return executor.execute()
     }
 }
