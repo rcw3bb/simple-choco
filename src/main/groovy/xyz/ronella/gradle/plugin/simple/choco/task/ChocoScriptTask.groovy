@@ -1,8 +1,11 @@
 package xyz.ronella.gradle.plugin.simple.choco.task;
 
+import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.tasks.Input
 import xyz.ronella.gradle.plugin.simple.choco.ChocoScriptException;
+
+import javax.inject.Inject
 
 /**
  * The base class of all the script task in command mode.
@@ -15,8 +18,9 @@ abstract class ChocoScriptTask extends AbstractChocoScriptTask {
     @Input
     abstract ListProperty<List<String>> getCommands()
 
-    ChocoScriptTask() {
-        super()
+    @Inject
+    ChocoScriptTask(ObjectFactory objects) {
+        super(objects)
         description = 'Creates a script that contains the commands before execution.'
         commands.convention([])
     }

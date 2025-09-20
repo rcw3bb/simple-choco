@@ -1,8 +1,11 @@
 package xyz.ronella.gradle.plugin.simple.choco.task
 
+import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.tasks.Input
 import xyz.ronella.gradle.plugin.simple.choco.ChocoScriptException
+
+import javax.inject.Inject
 
 /**
  * The base class of all the task in package mode.
@@ -15,8 +18,9 @@ abstract class AbstractChocoScriptPackageTask extends AbstractChocoScriptAdminTa
     @Input
     abstract ListProperty<List<String>> getPackages()
 
-    AbstractChocoScriptPackageTask() {
-        super()
+    @Inject
+    AbstractChocoScriptPackageTask(ObjectFactory objects) {
+        super(objects)
         description = 'Creates a script that contains the packages before executing in package mode'
         packages.convention([])
     }

@@ -1,8 +1,11 @@
 package xyz.ronella.gradle.plugin.simple.choco.task
 
+import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Optional
+
+import javax.inject.Inject
 
 /**
  * A convenience task for adding a choco source.
@@ -22,8 +25,9 @@ abstract class ChocoAddSourceTask extends AbstractChocoSourceTask {
     @Optional @Input
     abstract Property<Integer> getPriority()
 
-    ChocoAddSourceTask() {
-        super()
+    @Inject
+    ChocoAddSourceTask(ObjectFactory objects) {
+        super(objects)
         description = 'Adds a source to where chocolatey search for a package.'
         internalArgs.set(['add'])
     }
@@ -32,7 +36,7 @@ abstract class ChocoAddSourceTask extends AbstractChocoSourceTask {
     String executeCommand() {
         def sourceNameToAdd = sourceName.get()
 
-        if (!EXTENSION.isNoop.get() && loadedSourceNames().contains(sourceNameToAdd)) {
+        if (!getExtension().get().isNoop.get() && loadedSourceNames().contains(sourceNameToAdd)) {
             println("The source [${sourceNameToAdd}] is already existing")
         }
         else {

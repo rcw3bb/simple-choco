@@ -1,5 +1,9 @@
 package xyz.ronella.gradle.plugin.simple.choco.task
 
+import org.gradle.api.model.ObjectFactory
+
+import javax.inject.Inject
+
 /**
  * A convenience task for upgrading a choco package.
  *
@@ -8,15 +12,16 @@ package xyz.ronella.gradle.plugin.simple.choco.task
  */
 abstract class ChocoUpgradeTask extends ChocoInstallTask {
 
-    ChocoUpgradeTask() {
-        super()
+    @Inject
+    ChocoUpgradeTask(ObjectFactory objects) {
+        super(objects)
         description = 'Upgrade installed chocolatey packages.'
         internalCommand.convention('upgrade')
     }
 
     @Override
     protected void initInternalZArgs() {
-        internalZArgs.addAll(EXTENSION.defaultUpgradeArgs.getOrElse([]))
+        internalZArgs.addAll(getExtension().get().defaultUpgradeArgs.getOrElse([]))
     }
 
 }

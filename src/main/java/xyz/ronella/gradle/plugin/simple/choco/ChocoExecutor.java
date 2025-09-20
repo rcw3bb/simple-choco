@@ -5,6 +5,7 @@ import xyz.ronella.trivial.handy.OSType;
 import xyz.ronella.trivial.handy.impl.CommandArray;
 
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -106,7 +107,7 @@ public final class ChocoExecutor {
 
     @SuppressWarnings({"PMD.OnlyOneReturn", "PMD.ExceptionAsFlowControl"})
     private Optional<File> executable() {
-        if (OSType.Windows.equals(osType)) {
+        if (OSType.WINDOWS.equals(osType)) {
             final Optional<Supplier<File>> executable = executables.stream().filter(___execLogic -> ___execLogic.get().exists()).findFirst();
             if (executable.isPresent()) {
                 final Supplier<File> exec = executable.get();
@@ -143,7 +144,7 @@ public final class ChocoExecutor {
             }
         }
         else {
-            System.err.printf("%s OS is required.%n", OSType.Windows);
+            System.err.printf("%s OS is required.%n", OSType.WINDOWS);
         }
 
         throw new ChocoExecutableException();
@@ -255,8 +256,8 @@ public final class ChocoExecutor {
     private void executeCommand(final List<String> command) {
         CommandProcessor.process(CommandProcessor.ProcessOutputHandler.captureStreams(
                 (___output, ___error) -> {
-                    final BufferedReader output = new BufferedReader(new InputStreamReader(___output));
-                    final BufferedReader error = new BufferedReader(new InputStreamReader(___error));
+                    final BufferedReader output = new BufferedReader(new InputStreamReader(___output, StandardCharsets.UTF_8));
+                    final BufferedReader error = new BufferedReader(new InputStreamReader(___error, StandardCharsets.UTF_8));
                     final String outputStr = output.lines().collect(Collectors.joining("\n"));
                     final String errorStr = error.lines().collect(Collectors.joining("\n"));
 
@@ -322,7 +323,7 @@ public final class ChocoExecutor {
                 }
             }
 
-            try (FileWriter writer = new FileWriter(scriptFile)) {
+            try (FileWriter writer = new FileWriter(scriptFile, StandardCharsets.UTF_8)) {
                 writer.write(script);
                 writer.flush();
             } catch (IOException ioe) {
@@ -425,7 +426,7 @@ public final class ChocoExecutor {
      * @author Ron Webb
      * @since v1.0.0
      */
-    final public static class ChocoExecutorBuilder {
+    public static final class ChocoExecutorBuilder {
         private boolean showCommand;
         private OSType osType;
         private boolean isAutoInstall;

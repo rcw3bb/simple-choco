@@ -1,10 +1,12 @@
 package xyz.ronella.gradle.plugin.simple.choco.task
 
+import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Input
 import xyz.ronella.gradle.plugin.simple.choco.ChocoExecutor
 import xyz.ronella.trivial.handy.RegExMatcher
 
+import javax.inject.Inject
 import java.util.stream.Collectors
 
 /**
@@ -15,8 +17,9 @@ import java.util.stream.Collectors
  */
 abstract class ChocoRemoveSourceTask extends AbstractChocoSourceTask {
 
-    ChocoRemoveSourceTask() {
-        super()
+    @Inject
+    ChocoRemoveSourceTask(ObjectFactory objects) {
+        super(objects)
         description = 'Removes a source to where chocolatey search for a package.'
         internalArgs.add('remove')
     }
@@ -25,7 +28,7 @@ abstract class ChocoRemoveSourceTask extends AbstractChocoSourceTask {
     String executeCommand() {
         def theSourceName = sourceName.get()
 
-        if (EXTENSION.isNoop.get() || loadedSourceNames().contains(theSourceName)) {
+        if (getExtension().get().isNoop.get() || loadedSourceNames().contains(theSourceName)) {
             super.executeCommand()
         }
         else {

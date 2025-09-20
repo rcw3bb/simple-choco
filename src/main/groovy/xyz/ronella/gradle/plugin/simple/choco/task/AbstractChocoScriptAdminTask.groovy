@@ -1,5 +1,9 @@
 package xyz.ronella.gradle.plugin.simple.choco.task
 
+import org.gradle.api.model.ObjectFactory
+
+import javax.inject.Inject
+
 /**
  * This is the admin mode of ChocoScriptTask
  *
@@ -8,8 +12,9 @@ package xyz.ronella.gradle.plugin.simple.choco.task
  */
 abstract class AbstractChocoScriptAdminTask extends AbstractChocoScriptTask {
 
-    AbstractChocoScriptAdminTask() {
-        super()
+    @Inject
+    AbstractChocoScriptAdminTask(ObjectFactory objects) {
+        super(objects)
         description = 'Creates a script that contains the packages before executing in administration mode'
         isAdminMode.convention(true)
     }

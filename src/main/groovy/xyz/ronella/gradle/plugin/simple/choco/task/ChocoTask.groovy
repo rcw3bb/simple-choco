@@ -1,14 +1,18 @@
 package xyz.ronella.gradle.plugin.simple.choco.task
 
 import org.gradle.api.DefaultTask
+import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.TaskAction
 import xyz.ronella.gradle.plugin.simple.choco.ChocoExecutor
 import xyz.ronella.gradle.plugin.simple.choco.SimpleChocoPluginExtension
 import xyz.ronella.gradle.plugin.simple.choco.tools.Administration
+
+import javax.inject.Inject
 
 /**
  * The simple-choco base task.
@@ -18,7 +22,10 @@ import xyz.ronella.gradle.plugin.simple.choco.tools.Administration
  */
 abstract class ChocoTask extends DefaultTask {
 
-    protected final SimpleChocoPluginExtension EXTENSION
+    private final ObjectFactory objects
+
+    @Internal
+    abstract Property<SimpleChocoPluginExtension> getExtension()
 
     protected Property<Boolean> isAdminMode
 
@@ -39,14 +46,14 @@ abstract class ChocoTask extends DefaultTask {
     @Optional @Input
     abstract ListProperty<String> getZArgs()
 
-    ChocoTask() {
+    @Inject
+    ChocoTask(ObjectFactory objects) {
+        this.objects = objects
         group = 'Simple Chocolatey'
         description = 'Executes any valid chocolatey commands.'
-        EXTENSION = project.extensions.simple_choco
         command.convention('')
         args.convention([])
         getZArgs().convention([])
-        var objects = project.objects
         isAdminMode = objects.property(Boolean.class)
         hasLogging = objects.property(Boolean.class)
         internalArgs = objects.listProperty(String.class)
@@ -62,16 +69,17 @@ abstract class ChocoTask extends DefaultTask {
     }
 
     protected ListProperty<List<String>> commandsToScript() {
-        return project.objects.<List<String>>listProperty(List<String>.class)
+        return objects.<List<String>>listProperty(List<String>.class)
     }
 
     @TaskAction
     String executeCommand() {
+        def extension = getExtension().get()
 
         ChocoExecutor executor = ChocoExecutor.getBuilder()
-                .addAutoInstall(EXTENSION.isAutoInstall.get())
-                .addNoop(EXTENSION.isNoop.get())
-                .addChocoHome(EXTENSION.chocoHome.getOrNull())
+                .addAutoInstall(extension.isAutoInstall.get())
+                .addNoop(extension.isNoop.get())
+                .addChocoHome(extension.chocoHome.getOrNull())
                 .addAdminMode(isAdminMode.get())
                 .addCommand(internalCommand.isPresent() ? internalCommand.get() : command.get())
                 .addArgs(internalArgs.get().toArray((String[])[]))
@@ -80,12 +88,12 @@ abstract class ChocoTask extends DefaultTask {
                 .addZArgs(getZArgs().get().toArray((String[])[]))
                 .addLogging(hasLogging.get())
                 .addRunningOnAdmin(Administration.isElevatedMode())
-                .addForceAdminMode(EXTENSION.forceAdminMode.get())
+                .addForceAdminMode(extension.forceAdminMode.get())
                 .addScriptMode(scriptMode())
                 .addCommands(commandsToScript().get())
                 .addTaskName(name)
-                .addNoScriptDeletion(EXTENSION.noScriptDeletion.get())
-                .addChocoDownloadURL(EXTENSION.chocoDownloadURL.get())
+                .addNoScriptDeletion(extension.noScriptDeletion.get())
+                .addChocoDownloadURL(extension.chocoDownloadURL.get())
                 .build()
 
         executor.execute()

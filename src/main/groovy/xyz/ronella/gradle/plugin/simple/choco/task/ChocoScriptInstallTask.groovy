@@ -1,4 +1,9 @@
 package xyz.ronella.gradle.plugin.simple.choco.task
+
+import org.gradle.api.model.ObjectFactory
+
+import javax.inject.Inject
+
 /**
  * A convenience task for installing choco packages by script.
  *
@@ -7,14 +12,16 @@ package xyz.ronella.gradle.plugin.simple.choco.task
  */
 abstract class ChocoScriptInstallTask extends AbstractChocoScriptPackageTask {
 
-    ChocoScriptInstallTask() {
+    @Inject
+    ChocoScriptInstallTask(ObjectFactory objects) {
+        super(objects)
         description = "Install packages from chocolatey sources by script."
         internalCommand.convention('install')
         hasLogging.convention(true)
     }
 
     protected void initInternalZArgs() {
-        internalZArgs.addAll(EXTENSION.defaultInstallArgs.getOrElse([]))
+        internalZArgs.addAll(getExtension().get().defaultInstallArgs.getOrElse([]))
     }
 
     @Override

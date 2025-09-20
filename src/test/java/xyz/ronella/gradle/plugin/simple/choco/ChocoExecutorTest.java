@@ -13,7 +13,7 @@ public class ChocoExecutorTest {
     @Test
     public void adminMode() {
         ChocoExecutor executor = ChocoExecutor.getBuilder()
-                .addOSType(OSType.Windows)
+                .addOSType(OSType.WINDOWS)
                 .addNoop(true)
                 .addAdminMode(true)
                 .build();
@@ -26,7 +26,7 @@ public class ChocoExecutorTest {
     @Test
     public void adminModeRunningOnAdmin() {
         ChocoExecutor executor = ChocoExecutor.getBuilder()
-                .addOSType(OSType.Windows)
+                .addOSType(OSType.WINDOWS)
                 .addNoop(true)
                 .addAdminMode(true)
                 .addRunningOnAdmin(true)
@@ -40,7 +40,7 @@ public class ChocoExecutorTest {
     @Test
     public void adminModeRunningOnAdminForceAdmin() {
         ChocoExecutor executor = ChocoExecutor.getBuilder()
-                .addOSType(OSType.Windows)
+                .addOSType(OSType.WINDOWS)
                 .addNoop(true)
                 .addAdminMode(true)
                 .addRunningOnAdmin(true)
@@ -55,7 +55,7 @@ public class ChocoExecutorTest {
     @Test
     public void adminModeForceAdmin() {
         ChocoExecutor executor = ChocoExecutor.getBuilder()
-                .addOSType(OSType.Windows)
+                .addOSType(OSType.WINDOWS)
                 .addNoop(true)
                 .addAdminMode(true)
                 .addForceAdminMode(true)
@@ -69,7 +69,7 @@ public class ChocoExecutorTest {
     @Test
     public void forceAdmin() {
         ChocoExecutor executor = ChocoExecutor.getBuilder()
-                .addOSType(OSType.Windows)
+                .addOSType(OSType.WINDOWS)
                 .addNoop(true)
                 .addForceAdminMode(true)
                 .build();
@@ -82,7 +82,7 @@ public class ChocoExecutorTest {
     @Test
     public void runningOnAdminMode() {
         ChocoExecutor executor = ChocoExecutor.getBuilder()
-                .addOSType(OSType.Windows)
+                .addOSType(OSType.WINDOWS)
                 .addNoop(true)
                 .addRunningOnAdmin(true)
                 .build();
@@ -95,7 +95,7 @@ public class ChocoExecutorTest {
     @Test
     public void scriptModeMultiPackagesNonAdmin() {
         ChocoExecutor executor = ChocoExecutor.getBuilder()
-                .addOSType(OSType.Windows)
+                .addOSType(OSType.WINDOWS)
                 .addNoop(true)
                 .addAdminMode(false)
                 .addScriptMode(true)
@@ -118,7 +118,7 @@ public class ChocoExecutorTest {
     @Test
     public void scriptModeMultiPackagesAdmin() {
         ChocoExecutor executor = ChocoExecutor.getBuilder()
-                .addOSType(OSType.Windows)
+                .addOSType(OSType.WINDOWS)
                 .addNoop(true)
                 .addAdminMode(true)
                 .addScriptMode(true)

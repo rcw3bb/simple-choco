@@ -11,7 +11,7 @@ import java.nio.file.Paths;
  * @author Ron Webb
  * @since 1.1.0
  */
-final public class Administration {
+public final class Administration {
 
     private Administration() {}
 

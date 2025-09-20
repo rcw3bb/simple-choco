@@ -29,22 +29,55 @@ class SimpleChocoPlugin implements Plugin<Project> {
 
     @Override
     void apply(Project project) {
-        project.extensions.create('simple_choco', SimpleChocoPluginExtension)
-        project.task('chocoAddSource', type: ChocoAddSourceTask)
-        project.task('chocoAdminTask', type: ChocoAdminTask)
-        project.task('chocoInstall', type: ChocoInstallTask)
-        project.task('chocoListInstalled', type: ChocoListInstalledTask)
-        project.task('chocoRemoveSource', type: ChocoRemoveSourceTask)
-        project.task('chocoScript', type: ChocoScriptTask)
-        project.task('chocoScriptAdmin', type: ChocoScriptAdminTask)
-        project.task('chocoScriptInstall', type: ChocoScriptInstallTask)
-        project.task('chocoScriptUninstall', type: ChocoScriptUninstallTask)
-        project.task('chocoScriptUpgrade', type: ChocoScriptUpgradeTask)
-        project.task('chocoSourceList', type: ChocoSourceListTask)
-        project.task('chocoTask', type: ChocoTask)
-        project.task('chocoUninstall', type: ChocoUninstallTask)
-        project.task('chocoUpgradeChoco', type: ChocoUpgradeChocoTask)
-        project.task('chocoUpgrade', type: ChocoUpgradeTask)
-        project.task('chocoVersion', type: ChocoVersionTask)
+        def extension = project.extensions.create('simple_choco', SimpleChocoPluginExtension)
+        
+        project.tasks.register('chocoAddSource', ChocoAddSourceTask) { task ->
+            task.extension.set(extension)
+        }
+        project.tasks.register('chocoAdminTask', ChocoAdminTask) { task ->
+            task.extension.set(extension)
+        }
+        project.tasks.register('chocoInstall', ChocoInstallTask) { task ->
+            task.extension.set(extension)
+        }
+        project.tasks.register('chocoListInstalled', ChocoListInstalledTask) { task ->
+            task.extension.set(extension)
+        }
+        project.tasks.register('chocoRemoveSource', ChocoRemoveSourceTask) { task ->
+            task.extension.set(extension)
+        }
+        project.tasks.register('chocoScript', ChocoScriptTask) { task ->
+            task.extension.set(extension)
+        }
+        project.tasks.register('chocoScriptAdmin', ChocoScriptAdminTask) { task ->
+            task.extension.set(extension)
+        }
+        project.tasks.register('chocoScriptInstall', ChocoScriptInstallTask) { task ->
+            task.extension.set(extension)
+        }
+        project.tasks.register('chocoScriptUninstall', ChocoScriptUninstallTask) { task ->
+            task.extension.set(extension)
+        }
+        project.tasks.register('chocoScriptUpgrade', ChocoScriptUpgradeTask) { task ->
+            task.extension.set(extension)
+        }
+        project.tasks.register('chocoSourceList', ChocoSourceListTask) { task ->
+            task.extension.set(extension)
+        }
+        project.tasks.register('chocoTask', ChocoTask) { task ->
+            task.extension.set(extension)
+        }
+        project.tasks.register('chocoUninstall', ChocoUninstallTask) { task ->
+            task.extension.set(extension)
+        }
+        project.tasks.register('chocoUpgradeChoco', ChocoUpgradeChocoTask) { task ->
+            task.extension.set(extension)
+        }
+        project.tasks.register('chocoUpgrade', ChocoUpgradeTask) { task ->
+            task.extension.set(extension)
+        }
+        project.tasks.register('chocoVersion', ChocoVersionTask) { task ->
+            task.extension.set(extension)
+        }
     }
 }

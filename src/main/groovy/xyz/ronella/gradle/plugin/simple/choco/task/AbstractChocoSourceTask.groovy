@@ -1,10 +1,12 @@
 package xyz.ronella.gradle.plugin.simple.choco.task
 
+import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Input
 import xyz.ronella.gradle.plugin.simple.choco.ChocoExecutor
 import xyz.ronella.trivial.handy.RegExMatcher
 
+import javax.inject.Inject
 import java.util.stream.Collectors
 
 /**
@@ -17,16 +19,18 @@ abstract class AbstractChocoSourceTask extends ChocoAdminTask {
     @Input
     abstract Property<String> getSourceName()
 
-    AbstractChocoSourceTask() {
-        super()
+    @Inject
+    AbstractChocoSourceTask(ObjectFactory objects) {
+        super(objects)
         internalCommand.convention('source')
     }
 
     protected def loadedSourceNames() {
+        def extension = getExtension().get()
         ChocoExecutor executor = ChocoExecutor.getBuilder()
-                .addAutoInstall(EXTENSION.isAutoInstall.get())
-                .addNoop(EXTENSION.isNoop.get())
-                .addChocoHome(EXTENSION.chocoHome.getOrNull())
+                .addAutoInstall(extension.isAutoInstall.get())
+                .addNoop(extension.isNoop.get())
+                .addChocoHome(extension.chocoHome.getOrNull())
                 .addCommand('source')
                 .addArgs('list')
                 .addLogging(hasLogging.get())

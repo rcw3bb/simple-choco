@@ -1,4 +1,9 @@
 package xyz.ronella.gradle.plugin.simple.choco.task
+
+import org.gradle.api.model.ObjectFactory
+
+import javax.inject.Inject
+
 /**
  * The base class of all the task in script mode.
  *
@@ -7,8 +12,9 @@ package xyz.ronella.gradle.plugin.simple.choco.task
  */
 abstract class AbstractChocoScriptTask extends ChocoTask {
 
-    AbstractChocoScriptTask() {
-        super()
+    @Inject
+    AbstractChocoScriptTask(ObjectFactory objects) {
+        super(objects)
         description = 'Creates a script that contains the packages before executing'
     }
 

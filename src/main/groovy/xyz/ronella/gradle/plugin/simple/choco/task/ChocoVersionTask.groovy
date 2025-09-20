@@ -1,5 +1,9 @@
 package xyz.ronella.gradle.plugin.simple.choco.task
 
+import org.gradle.api.model.ObjectFactory
+
+import javax.inject.Inject
+
 /**
  * A convenience task for showing the current choco version.
  *
@@ -8,8 +12,9 @@ package xyz.ronella.gradle.plugin.simple.choco.task
  */
 abstract class ChocoVersionTask extends ChocoTask {
 
-    ChocoVersionTask() {
-        super()
+    @Inject
+    ChocoVersionTask(ObjectFactory objects) {
+        super(objects)
         description = 'Displays the chocolatey version.'
         internalArgs.add('--version')
     }
