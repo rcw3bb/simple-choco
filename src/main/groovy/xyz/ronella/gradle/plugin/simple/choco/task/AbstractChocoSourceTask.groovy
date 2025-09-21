@@ -26,7 +26,7 @@ abstract class AbstractChocoSourceTask extends ChocoAdminTask {
     }
 
     protected def loadedSourceNames() {
-        def extension = getExtension().get()
+        def extension = getSafeExtension()
         ChocoExecutor executor = ChocoExecutor.getBuilder()
                 .addAutoInstall(extension.isAutoInstall.get())
                 .addNoop(extension.isNoop.get())

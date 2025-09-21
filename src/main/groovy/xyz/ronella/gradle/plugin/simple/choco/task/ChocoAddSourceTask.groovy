@@ -36,7 +36,7 @@ abstract class ChocoAddSourceTask extends AbstractChocoSourceTask {
     String executeCommand() {
         def sourceNameToAdd = sourceName.get()
 
-        if (!getExtension().get().isNoop.get() && loadedSourceNames().contains(sourceNameToAdd)) {
+        if (!getSafeExtension().isNoop.get() && loadedSourceNames().contains(sourceNameToAdd)) {
             println("The source [${sourceNameToAdd}] is already existing")
         }
         else {

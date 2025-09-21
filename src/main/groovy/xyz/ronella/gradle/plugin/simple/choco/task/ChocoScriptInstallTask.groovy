@@ -21,7 +21,7 @@ abstract class ChocoScriptInstallTask extends AbstractChocoScriptPackageTask {
     }
 
     protected void initInternalZArgs() {
-        internalZArgs.addAll(getExtension().get().defaultInstallArgs.getOrElse([]))
+        internalZArgs.addAll(getSafeExtension().defaultInstallArgs.getOrElse([]))
     }
 
     @Override

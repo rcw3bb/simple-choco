@@ -29,7 +29,7 @@ final class ChocoExecutorHelper {
      * @return A fully configured ChocoExecutor ready for execution
      */
     static ChocoExecutor createExecutor(ChocoTask task) {
-        def extension = task.getExtension().get()
+        def extension = task.getSafeExtension()
 
         return ChocoExecutor.getBuilder()
                 .addAutoInstall(extension.isAutoInstall.get())

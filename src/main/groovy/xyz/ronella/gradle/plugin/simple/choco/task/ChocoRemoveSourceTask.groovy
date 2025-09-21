@@ -28,7 +28,7 @@ abstract class ChocoRemoveSourceTask extends AbstractChocoSourceTask {
     String executeCommand() {
         def theSourceName = sourceName.get()
 
-        if (getExtension().get().isNoop.get() || loadedSourceNames().contains(theSourceName)) {
+        if (getSafeExtension().isNoop.get() || loadedSourceNames().contains(theSourceName)) {
             super.executeCommand()
         }
         else {

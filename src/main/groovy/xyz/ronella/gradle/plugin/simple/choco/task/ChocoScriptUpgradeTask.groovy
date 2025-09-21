@@ -21,6 +21,6 @@ abstract class ChocoScriptUpgradeTask extends ChocoScriptInstallTask {
 
     @Override
     protected void initInternalZArgs() {
-        internalZArgs.addAll(getExtension().get().defaultUpgradeArgs.getOrElse([]))
+        internalZArgs.addAll(getSafeExtension().defaultUpgradeArgs.getOrElse([]))
     }
 }

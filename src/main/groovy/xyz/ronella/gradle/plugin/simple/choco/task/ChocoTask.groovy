@@ -4,6 +4,7 @@ import org.gradle.api.DefaultTask
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
+import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.Optional
@@ -23,9 +24,28 @@ import javax.inject.Inject
 abstract class ChocoTask extends DefaultTask {
 
     private final ObjectFactory objects
-
+    
     @Internal
     abstract Property<SimpleChocoPluginExtension> getExtension()
+
+    private Provider<SimpleChocoPluginExtension> getExtensionProviderSafe() { //codenarc-disable MethodName
+        if (!this.extension.isPresent()) {
+            // Fallback: create provider directly from project (this will show deprecation warning)
+            // This should only happen if task is used outside of the plugin registration
+            logger.warn('Task was created outside of SimpleChocoPlugin.')
+            this.extension.set(project.provider { project.extensions.simple_choco })
+        }
+        this.extension
+    }
+
+    /**
+     * Gets the extension instance safely using a provider pattern.
+     * This ensures that getExtension() always returns a value during task creation.
+     */
+    @Internal
+    protected SimpleChocoPluginExtension getSafeExtension() {
+        return getExtensionProviderSafe().get()
+    }
 
     protected Property<Boolean> isAdminMode
 

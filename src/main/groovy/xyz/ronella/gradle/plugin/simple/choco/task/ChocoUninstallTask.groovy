@@ -21,6 +21,6 @@ abstract class ChocoUninstallTask extends ChocoInstallTask {
 
     @Override
     protected void initInternalZArgs() {
-        internalZArgs.addAll(getExtension().get().defaultUninstallArgs.getOrElse([]))
+        internalZArgs.addAll(getSafeExtension().defaultUninstallArgs.getOrElse([]))
     }
 }

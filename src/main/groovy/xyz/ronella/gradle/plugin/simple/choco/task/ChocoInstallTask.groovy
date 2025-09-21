@@ -26,7 +26,7 @@ abstract class ChocoInstallTask extends ChocoAdminTask {
     }
 
     protected void initInternalZArgs() {
-        internalZArgs.addAll(getExtension().get().defaultInstallArgs.getOrElse([]))
+        internalZArgs.addAll(getSafeExtension().defaultInstallArgs.getOrElse([]))
     }
 
     @Override
