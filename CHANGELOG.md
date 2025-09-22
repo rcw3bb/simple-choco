@@ -1,5 +1,10 @@
 # Changelog
 
+## 3.1.1 : 2025-09-22
+
+### Minor Change
+* Make the extension provider access more robust in ChocoTask.
+
 ## 3.1.0 : 2025-09-21
 
 ### New
